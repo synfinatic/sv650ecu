@@ -1,4 +1,10 @@
 /* 
+ * Copyright 2013 (c) Aaron Turner
+ * This code is released under the GPLv3 license.  Please see the LICENSE file 
+ * for details.
+ *
+ * More information is available here: http://synfin.net/sv650ecu
+ *
  * Suzuki SV650 2nd gen (03-06) ECU -> Dash protocol decoder
  * Black/Green wire from ECU to Dash.  Simple serial protocol
  * running at 7800 BAUD.  Each message is 8 bytes.  10 messages/sec
