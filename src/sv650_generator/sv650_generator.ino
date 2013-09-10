@@ -3,6 +3,10 @@
  *
  * Arduino based SV650 ECU TACH line emulator.  I wrote this to 
  * make it easier to test my sv650 decoder code.  
+ *
+ * To support 7800 baud, you have to hack your SoftwareSerial.cpp file
+ * and add this to the 16Mhz struct:
+ *     { 7800,     138,       291,       291,      287,   },
  */
 #include <SoftwareSerial.h>
 #include <ST6961.h>

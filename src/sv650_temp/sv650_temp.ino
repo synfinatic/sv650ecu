@@ -6,6 +6,9 @@
  * that into degrees F/C.  I used this with the OEM dash to figure out
  * what ADC values mapped to what temperatures.
  *
+ * To support 7800 baud, you have to hack your SoftwareSerial.cpp file
+ * and add this to the 16Mhz struct:
+ *     { 7800,     138,       291,       291,      287,   },
  */
 #include <SoftwareSerial.h>
 #include <ST6961.h>
