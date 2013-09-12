@@ -247,6 +247,37 @@ TS-003</description>
 <rectangle x1="-0.889" y1="-1.27" x2="0.889" y2="-0.762" layer="51"/>
 <rectangle x1="1.651" y1="-1.27" x2="3.429" y2="-0.762" layer="51"/>
 </package>
+<package name="TO22H-2">
+<wire x1="-5.207" y1="-5.08" x2="5.207" y2="-5.08" width="0.1524" layer="21"/>
+<wire x1="5.207" y1="10.795" x2="-5.207" y2="10.795" width="0.1524" layer="21"/>
+<wire x1="5.207" y1="-5.08" x2="5.207" y2="7.366" width="0.1524" layer="21"/>
+<wire x1="5.207" y1="7.366" x2="4.318" y2="7.366" width="0.1524" layer="21"/>
+<wire x1="4.318" y1="7.366" x2="4.318" y2="8.89" width="0.1524" layer="21"/>
+<wire x1="4.318" y1="8.89" x2="5.207" y2="8.89" width="0.1524" layer="21"/>
+<wire x1="5.207" y1="8.89" x2="5.207" y2="10.795" width="0.1524" layer="21"/>
+<wire x1="-5.207" y1="-5.08" x2="-5.207" y2="7.366" width="0.1524" layer="21"/>
+<wire x1="-5.207" y1="7.366" x2="-4.318" y2="7.366" width="0.1524" layer="21"/>
+<wire x1="-4.318" y1="7.366" x2="-4.318" y2="8.89" width="0.1524" layer="21"/>
+<wire x1="-4.318" y1="8.89" x2="-5.207" y2="8.89" width="0.1524" layer="21"/>
+<wire x1="-5.207" y1="8.89" x2="-5.207" y2="10.795" width="0.1524" layer="21"/>
+<wire x1="-4.572" y1="-4.445" x2="4.572" y2="-4.445" width="0.0508" layer="21"/>
+<wire x1="4.572" y1="3.81" x2="4.572" y2="-4.445" width="0.0508" layer="21"/>
+<wire x1="4.572" y1="3.81" x2="-4.572" y2="3.81" width="0.0508" layer="21"/>
+<wire x1="-4.572" y1="-4.445" x2="-4.572" y2="3.81" width="0.0508" layer="21"/>
+<circle x="0" y="7.366" radius="1.8034" width="0.1524" layer="21"/>
+<pad name="1" x="-2.54" y="-7.62" drill="1.1176" shape="long" rot="R90"/>
+<pad name="2" x="0" y="-7.62" drill="1.1176" shape="long" rot="R90"/>
+<pad name="3" x="2.54" y="-7.62" drill="1.1176" shape="long" rot="R90"/>
+<text x="-5.461" y="-8.382" size="1.778" layer="25" ratio="10" rot="R90">&gt;NAME</text>
+<text x="7.366" y="-8.509" size="1.778" layer="27" ratio="10" rot="R90">&gt;VALUE</text>
+<rectangle x1="2.159" y1="-8.509" x2="2.921" y2="-7.874" layer="21"/>
+<rectangle x1="-0.381" y1="-8.509" x2="0.381" y2="-7.874" layer="21"/>
+<rectangle x1="-2.921" y1="-8.509" x2="-2.159" y2="-7.874" layer="21"/>
+<rectangle x1="-3.175" y1="-7.874" x2="-1.905" y2="-5.08" layer="21"/>
+<rectangle x1="-0.635" y1="-7.874" x2="0.635" y2="-5.08" layer="21"/>
+<rectangle x1="1.905" y1="-7.874" x2="3.175" y2="-5.08" layer="21"/>
+<smd name="P$1" x="0" y="7.366" dx="3.8" dy="3.8" layer="1" roundness="100"/>
+</package>
 </packages>
 <symbols>
 <symbol name="78XX">
@@ -365,6 +396,16 @@ http://www.fairchildsemi.com/ds/LM/LM7805.pdf</description>
 <technology name="24"/>
 <technology name="6"/>
 <technology name="8"/>
+</technologies>
+</device>
+<device name="TH2" package="TO22H-2">
+<connects>
+<connect gate="A1" pin="GND" pad="2"/>
+<connect gate="A1" pin="VI" pad="1"/>
+<connect gate="A1" pin="VO" pad="3"/>
+</connects>
+<technologies>
+<technology name=""/>
 </technologies>
 </device>
 </devices>
@@ -5078,18 +5119,21 @@ Available on eBay as a 10 pack for $10.  More info:&lt;p&gt;
 
 http://gtbtech.com/?p=528&lt;br/&gt;
 https://github.com/buzzdavidson/OasisLED</description>
-<rectangle x1="0" y1="0" x2="50" y2="19" layer="21"/>
 <pad name="P$6" x="18.4825" y="1.95" drill="0.8"/>
 <pad name="P$5" x="20.9825" y="2" drill="0.8"/>
 <pad name="P$4" x="23.365" y="2" drill="0.8"/>
 <pad name="P$3" x="25.7475" y="2" drill="0.8"/>
 <pad name="P$2" x="28.33" y="2" drill="0.8"/>
 <pad name="P$1" x="30.9125" y="2" drill="0.8" shape="square"/>
-<text x="4.7625" y="8.5725" size="6.35" layer="121">8 . 8 : 8 . 8</text>
+<text x="4.7625" y="8.5725" size="3.81" layer="121">8 . 8 : 8 . 8</text>
 <wire x1="17.018" y1="13.97" x2="17.018" y2="7.112" width="0.127" layer="121"/>
 <wire x1="37.084" y1="7.112" x2="37.084" y2="13.97" width="0.127" layer="121"/>
 <wire x1="37.084" y1="13.97" x2="17.018" y2="13.97" width="0.127" layer="121"/>
 <wire x1="17.018" y1="7.112" x2="37.084" y2="7.112" width="0.127" layer="121"/>
+<wire x1="50.165" y1="19.05" x2="50.165" y2="0" width="0.127" layer="21"/>
+<wire x1="50.165" y1="0" x2="0" y2="0" width="0.127" layer="21"/>
+<wire x1="0" y1="0" x2="0" y2="19.05" width="0.127" layer="21"/>
+<wire x1="0" y1="19.05" x2="50.165" y2="19.05" width="0.127" layer="21"/>
 </package>
 </packages>
 <symbols>
@@ -5960,7 +6004,7 @@ In this library the device names are the same as the pin names of the symbols, t
 </class>
 </classes>
 <parts>
-<part name="IC1" library="linear" deviceset="78*" device="T" technology="05">
+<part name="IC1" library="linear" deviceset="78*" device="TH2" value="7805">
 <attribute name="MF" value=""/>
 <attribute name="MPN" value=""/>
 <attribute name="OC_NEWARK" value="unknown"/>
