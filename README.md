@@ -1,6 +1,4 @@
-
 ## Suzuki SV650 ECU Decoder
-========
 
 This is the Arduino code (for a [PJRC Teensy 2.0](http://www.pjrc.com/store/teensy.html)) 
 and necessary CAD/schematic files for creating a PCB to creating your own 
