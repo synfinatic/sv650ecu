@@ -66,12 +66,12 @@ setup() {
     led.initDisplay();
 
     // Put unused pins in output mode so they don't float
-    for (i = 0; i < sizeof(unused_pins); i ++) {
+    for (i = 0; i < sizeof(unused_pins); i++) {
        pinMode(unused_pins[i], OUTPUT);
     } 
 
-    // count down through 0-9,a-f
-    for(int i=16; i >= 0; i--) {
+    // count down through 0-9,a-f to look fancy and show it's working
+    for (i = 16; i >= 0; i--) {
         led.sendDigits(0,0,0,i,0);
         delay(100);
     } 
@@ -81,8 +81,11 @@ setup() {
 
     clear_buf();
 
-    
+   
 #ifdef DEBUG_TABLES 
+    /*
+     *  Prints out all our static tables to serial for debugging/info purposes
+     */ 
     i = 0;
     serial_printf("our tps_table[] size is %u bytes\n", sizeof(tps_table));
     while (tps_table[i].bindex != 0xff) {
@@ -91,6 +94,7 @@ setup() {
         serial_printf("tps_table[%d].error  = '%s'\n", i, tps_table[i].error);
         i++;
     }
+
     serial_printf("our error_table[] size is %u bytes\n", sizeof(error_table));
     while (error_table[i].bindex != 0xff) {
         serial_printf("error_table[%d].bindex = '%02x'\n", i, error_table[i].bindex);
@@ -114,8 +118,7 @@ setup() {
  * Main loop
  */
 void 
-loop()
-{
+loop() {
     unsigned long ms = 0;
     unsigned long delta;
     unsigned int csum;
@@ -351,8 +354,7 @@ blink(unsigned long time) {
 
 // clears our message buffer
 void 
-clear_buf()
-{
+clear_buf() {
     int j;
     for (j = 0; j < 8; j++) {
         sbytes[j] = 0;

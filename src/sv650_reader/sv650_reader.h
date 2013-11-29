@@ -1,15 +1,30 @@
 #ifndef SV650_READER_H
 #define SV650_READER_H
 
-//#define DEBUG_MESSAGE         // decode each 8 byte message as hex
-#define DECODE_ERRORS         // decode errors in messages
+/* 
+ * Feel free to change these values based on how you want 
+ * the ECU Decoder to behave
+ */
+//#define ENABLE_TEMP         // Enable decoding temperature
+#define DECODE_ERRORS         // decode ECU codes to serial
 #define PRINT_DECODE 2000     // how often to decode error messages in ms
-#define DEBUG                 // detailed debug
+#define ALWAYS_SHOW_ERRORS 1  /* Show error codes even if not in dealer mode:
+                               * 1 = always show errors 
+                               * 0 = only in dealer mode
+                               */
+#define BLINK_MS 500          // how fast to blink status LED on the Teensy
+
+/*
+ * Debugging options.
+ */
+//#define DEBUG_MESSAGE       // decode each 8 byte message as hex
+//#define DEBUG               // detailed debug
 //#define DEBUG_TIMING
 //#define DEBUG_TABLES        // Print our tables at startup via serial
-#define ALWAYS_SHOW_ERRORS 1  // Show error codes even if not in dealer mode 1 or 0
-// #define ENABLE_TEMP           // Enable decoding temperature
-#define BLINK_MS 500          // how fast to blink status LED
+
+/*
+ * Don't change these unless you really know what you're doing!
+ */
 #define ECU_SPEED 7800        // ECU serial speed
 
 #define SERIAL_SPEED 9600     // Always 9600, really 12Mhz!
@@ -32,8 +47,7 @@ typedef struct _ECU_ERRORS
 } ECU_ERRORS;
 
 /*
- * We comment out any error codes which aren't valid
- * or that we don't care about
+ * Throttle position adjustment table
  */
 static const ECU_ERRORS tps_table[] = 
 {
@@ -43,6 +57,12 @@ static const ECU_ERRORS tps_table[] =
     { 1, 0x06, { 0x40, 0, 0 }, "TPS Adj Mid"    },
     { 0xff, 0xff, { 0, 0, 0 }, "" }, // last entry!
 };
+
+/*
+ * Error table of all known SV650 error codes.
+ * The commented out codes I believe are correct 
+ * for a DL1000 but are untested
+ */
 static const ECU_ERRORS error_table[] = 
 {
 #define DEALER_BINDEX 1
@@ -56,24 +76,29 @@ static const ECU_ERRORS error_table[] =
     { 2, 0x02, { 0x39, 0x5b, 0x6d }, "C25 IG Coil 2"  },
     { 2, 0x01, { 0x39, 0x5b, 0x66 }, "C24 IG Coil 1"  },
     { 3, 0x80, { 0x39, 0x5b, 0x4f }, "C23 Tip Over"   },
-//    { 3, 0x40, { 0x39, 0x5b, 0x5b }, "C22 CAM Sensr"   },  
+//    { 3, 0x40, { 0x39, 0x5b, 0x5b }, "C22 Atmosphere" },  
     { 3, 0x20, { 0x39, 0x5b, 0x06 }, "C21 Air Temp"   },
     { 3, 0x10, { 0x39, 0x06, 0x6d }, "C15 Eng Temp"   },
     { 3, 0x08, { 0x39, 0x06, 0x66 }, "C14 Pri TPS"    },
     { 3, 0x04, { 0x39, 0x06, 0x4f }, "C13 Air Press"  },
     { 3, 0x02, { 0x39, 0x06, 0x5b }, "C12 Crank Pos"  },
-//    { 3, 0x01, { 0x39, 0x06, 0x06 }, "C11 ????"       },
+//    { 3, 0x01, { 0x39, 0x06, 0x06 }, "C11 CAM Shaft"  },
     { 4, 0x80, { 0x39, 0x66, 0x67 }, "C49 Pair Valve" },
     { 4, 0x40, { 0x39, 0x5b, 0x67 }, "C29 Sec TPS"    },
     { 4, 0x20, { 0x39, 0x5b, 0x7f }, "C28 STVA Motor" },
-//    { 4, 0x08, { 0x39, 0x66, 0x66 }, "C44 ????"       },
+//    { 4, 0x08, { 0x39, 0x66, 0x66 }, "C44 Heated O2"  },
     { 0xff, 0xff, { 0x3f, 0x3f, 0x3f }, "000 No Error" }, // last entry!
 };
 
 /*
- * Starts at 42, each value is actually == value - 60. 
- * This was done because we wanted every value to be stored as a single
- * byte
+ * The ECU has an ADC to read the water temp sensor and sends values 
+ * which we have to map to degrees F.  
+ * Values 0-42 are "HI"
+ * Values 43-542 are mapped to degrees F below
+ * Values > 543 are --- (too low)
+ *
+ * The map values below are actually 60F below the actual temp because
+ * I wanted to store all possible values (265-68F) in a single byte.
  */
 
 PROGMEM prog_uchar temp_table[] = 
@@ -107,6 +132,11 @@ PROGMEM prog_uchar temp_table[] =
     12, 12, 12, 11, 11, 11, 11, 11, 10, 10, 10, 10, 10, 9, 9, 9, 9, 9, 8, 8, 8
 };
 
+/*
+ * Maps ASCII characters to something that looks like that character 
+ * on the 7 segment display.  Not all characters are represented and 
+ * some chars overlap (especially upper & lower case).
+ */
 PROGMEM prog_uchar display_table[] =
 {
     0    , 0    , 0    , 0    , 0    , 0    , 0    , 0    , 

@@ -7,7 +7,7 @@
 const char DISPPOS[4] = { 0xc0, 0xc2, 0xc4, 0xc6 };
 
 /*
- * Gets the LCD value for a given char
+ * Gets the LCD value for a given ASCII char
  */
 byte 
 get_display_char(char val)
@@ -24,6 +24,9 @@ get_display_hex(int val)
     return pgm_read_byte_near(display_table + val + 0x30);
 }
 
+/*
+ * Prints 4 characters on the 7 segment display
+ */
 void 
 display_chars(char digit1, char digit2, char digit3, char digit4)
 {
@@ -40,6 +43,9 @@ display_chars(char digit1, char digit2, char digit3, char digit4)
     digitalWrite(CS,HIGH);    
 }
 
+/*
+ *  Prints 4 hex characters on the 7 segment display
+ */
 void 
 display_values(char digit1, char digit2, char digit3, char digit4)
 {
@@ -56,6 +62,9 @@ display_values(char digit1, char digit2, char digit3, char digit4)
     digitalWrite(CS,HIGH);    
 }
 
+/*
+ * Prints a single character at the given position on the 7 segment display
+ */
 void 
 display_char(int position, char digit)
 {
@@ -81,13 +90,11 @@ print_led_error(char tps_adjust, int idx) {
 }
 
 
-#ifdef ENABLE_TEMP
 /*
  * Print water temp
  */
 void 
-print_led_temp()
-{
+print_led_temp() {
     unsigned int adc_value;
     unsigned int temp;
     int holding;
@@ -97,9 +104,9 @@ print_led_temp()
     adc_value = sbytes[0] << 2;
     adc_value += (sbytes[1] & 0xc0) >> 6;
 
-    // covert temp into a value fareinheit
-    // and then use led.sendDigit()
-
+    /* 
+     * covert temp into a value fareinheit and then print it
+     */
     display[3] = get_display_char('F');
     if (adc_value <= 42) {
         // temp == HI 
@@ -107,11 +114,12 @@ print_led_temp()
         display[1] = get_display_char('I');
         display[2] = 0;
     } else if (adc_value >= 525) {
-        // temp == --- 
+        // temp == LO (--- on stock display) 
         display[0] = get_display_char('L'); 
         display[1] = get_display_char('O'); 
         display[2] = 0;
     } else {
+        // temp == XXXF
         temp = pgm_read_byte_near(temp_table + (adc_value - 42)) + 60;
         serial_printf("temp is %u\n", temp);
 
@@ -138,22 +146,19 @@ print_led_temp()
  * Notify user of bad Temp condition
  */
 void 
-print_led_bad_temp()
-{
+print_led_bad_temp() {
     char display[4] = { 'B', 'A', 'D', 'T' };  // BADT
 #ifdef DEBUG
     serial_printf("print_led_bad_temp\n");
 #endif
     display_chars(display[0], display[1], display[2], display[3]);
 }
-#endif
 
 /*
  * Notify user of bad EFI condition
  */
 void 
-print_led_bad_efi()
-{
+print_led_bad_efi() {
     char display[4] = { 'B', 'A', 'D', 'E' };  // BADE
 #ifdef DEBUG
     serial_printf("print_led_bad_efi\n");
