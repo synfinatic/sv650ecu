@@ -6,6 +6,7 @@
  * the ECU Decoder to behave
  */
 //#define ENABLE_TEMP         // Enable decoding temperature
+#define USE_CELCIUS         // Display in C, not F
 #define DECODE_ERRORS         // decode ECU codes to serial
 #define PRINT_DECODE 2000     // how often to decode error messages in ms
 #define ALWAYS_SHOW_ERRORS 1  /* Show error codes even if not in dealer mode:

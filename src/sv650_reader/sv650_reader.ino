@@ -28,41 +28,44 @@
 #include "sv650_reader.h"
 #include "display.h"
 
-// pins we don't use on the Teensy board
-char unused_pins[] = { 
-    3, 4, 5, 6, 9, 10, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24 
-};
-
-
-/* 
- * globals
- */
-unsigned long ms_last;
-int byte_idx = 0;
-byte sbytes[8];
-int efi_alarm = 0;  // true or false
-
-HardwareSerial ecu;
-ST6961 led = ST6961(MOSI, CLK, CS);
-
+// pre-declare our functions
 void clear_buf();
 void serial_printf(const char *fmt, ... );
 void parse_message();
 unsigned int check_csum();
 void blink(unsigned long time);
 
-/*
+/****************************************************************************
+ * globals
+ ****************************************************************************/
+
+// pins we don't use on the Teensy board
+char unused_pins[] = { 
+    3, 4, 5, 6, 9, 10, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24 
+};
+
+unsigned long ms_last;     // last time we saw a message
+int byte_idx = 0;          // message byte index
+byte sbytes[8];            // storage for our messages from the ECU
+int efi_alarm = 0;         // true or false if we've seen an error code
+
+// Init our hardware serial & LCD display
+HardwareSerial ecu = HardwareSerial();
+ST6961 led = ST6961(MOSI, CLK, CS);
+
+
+/****************************************************************************
  * main setup 
- */
+ ****************************************************************************/
 void 
 setup() {
     unsigned i = 0;
 
-    ecu = HardwareSerial();
-
-    // initialize serial communications
+    // initialize serial communication to the ECU
     ecu.begin(ECU_SPEED);
     Serial.begin(SERIAL_SPEED);
+
+    // initalize the LED display
     led.initDisplay();
 
     // Put unused pins in output mode so they don't float
@@ -75,12 +78,14 @@ setup() {
         led.sendDigits(0,0,0,i,0);
         delay(100);
     } 
+
+    // clear display
     led.initDisplay();
 
+    // we control the EFI warning LED
     pinMode(EFI_WARN, OUTPUT);
 
     clear_buf();
-
    
 #ifdef DEBUG_TABLES 
     /*
@@ -114,9 +119,9 @@ setup() {
     ms_last = millis();
 }
 
-/*
- * Main loop
- */
+/****************************************************************************
+ * main loop 
+ ****************************************************************************/
 void 
 loop() {
     unsigned long ms = 0;

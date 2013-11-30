@@ -99,6 +99,9 @@ print_led_temp() {
     unsigned int temp;
     int holding;
     char display[4];
+#ifdef USE_CELCIUS
+    float celcius;
+#endif
 
     // temp is all of byte 0 and top two bits of byte 1
     adc_value = sbytes[0] << 2;
@@ -121,6 +124,11 @@ print_led_temp() {
     } else {
         // temp == XXXF
         temp = pgm_read_byte_near(temp_table + (adc_value - 42)) + 60;
+#ifdef USE_CELCIUS
+        // (F - 32) * 5/9 = C
+        celcius = (float)(temp - 32) * ((float)5/9);
+        temp = (unsigned int)celcius;
+#endif
         serial_printf("temp is %u\n", temp);
 
         holding = temp % 10;
