@@ -129,14 +129,15 @@
 <wire x1="0" y1="52.06" x2="0" y2="0" width="0" layer="20"/>
 <hole x="3.302" y="29.464" drill="5.1562"/>
 <hole x="50.546" y="29.464" drill="5.1562"/>
-<text x="6.858" y="33.782" size="1.524" layer="21" font="vector">SV650 ECU Decoder 4.0
+<text x="6.858" y="33.782" size="1.524" layer="21" font="vector">SV650 ECU Decoder 4.1
 http://synfin.net/sv650ecu</text>
 <text x="53.594" y="49.022" size="1.778" layer="22" rot="MR0">S/N:</text>
 <rectangle x1="22.098" y1="48.26" x2="47.752" y2="51.816" layer="22"/>
 <text x="14.986" y="50.038" size="1.27" layer="112">EFI</text>
 <text x="31.496" y="49.784" size="1.27" layer="112">Oil</text>
 <text x="48.26" y="49.784" size="1.27" layer="112">NTRL</text>
-<text x="42.164" y="30.734" size="1.27" layer="112">Fuel</text>
+<text x="40.894" y="37.846" size="1.27" layer="112">Fuel</text>
+<text x="29.464" y="32.258" size="1.016" layer="21">20131213</text>
 </plain>
 <libraries>
 <library name="linear">
@@ -1671,11 +1672,11 @@ Please make sure your boards conform to these design rules.</description>
 <attribute name="MF" value="" x="43.434" y="45.466" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="MPN" value="" x="43.434" y="45.466" size="1.778" layer="27" rot="R270" display="off"/>
 </element>
-<element name="D2" library="led" package="LED5MM" value="Blue" x="43.434" y="35.56" smashed="yes" rot="R180">
-<attribute name="NAME" x="49.149" y="35.7886" size="1.27" layer="25" ratio="10" rot="R180"/>
-<attribute name="OC_NEWARK" value="unknown" x="43.434" y="35.56" size="1.778" layer="27" rot="R180" display="off"/>
-<attribute name="MF" value="" x="43.434" y="35.56" size="1.778" layer="27" rot="R180" display="off"/>
-<attribute name="MPN" value="" x="43.434" y="35.56" size="1.778" layer="27" rot="R180" display="off"/>
+<element name="D2" library="led" package="LED5MM" value="Blue" x="43.434" y="34.29" smashed="yes" rot="R180">
+<attribute name="NAME" x="49.149" y="34.5186" size="1.27" layer="25" ratio="10" rot="R180"/>
+<attribute name="OC_NEWARK" value="unknown" x="43.434" y="34.29" size="1.778" layer="27" rot="R180" display="off"/>
+<attribute name="MF" value="" x="43.434" y="34.29" size="1.778" layer="27" rot="R180" display="off"/>
+<attribute name="MPN" value="" x="43.434" y="34.29" size="1.778" layer="27" rot="R180" display="off"/>
 </element>
 <element name="R4" library="resistor" package="M0805" value="150" x="2.032" y="41.148" smashed="yes" rot="R270">
 <attribute name="OC_NEWARK" value="01N7000" x="2.032" y="41.148" size="1.778" layer="27" rot="R270" display="off"/>
@@ -1868,8 +1869,8 @@ Please make sure your boards conform to these design rules.</description>
 <signal name="N$7">
 <contactref element="R2" pad="1"/>
 <contactref element="D2" pad="A"/>
-<wire x1="44.704" y1="35.56" x2="46.294" y2="37.912" width="0.3048" layer="1"/>
-<wire x1="46.294" y1="37.912" x2="50.546" y2="37.912" width="0.3048" layer="1"/>
+<wire x1="44.704" y1="34.29" x2="47.31" y2="37.912" width="0.3048" layer="1"/>
+<wire x1="47.31" y1="37.912" x2="50.546" y2="37.912" width="0.3048" layer="1"/>
 </signal>
 <signal name="N$9">
 <contactref element="_1" pad="D6"/>
@@ -1902,8 +1903,8 @@ Please make sure your boards conform to these design rules.</description>
 <signal name="FUEL">
 <contactref element="D2" pad="K"/>
 <contactref element="U$3" pad="P$4"/>
-<wire x1="42.164" y1="35.56" x2="28.702" y2="35.56" width="0.3048" layer="1"/>
-<wire x1="28.702" y1="35.56" x2="25.358" y2="32.216" width="0.3048" layer="1"/>
+<wire x1="42.164" y1="34.29" x2="27.432" y2="34.29" width="0.3048" layer="1"/>
+<wire x1="27.432" y1="34.29" x2="25.358" y2="32.216" width="0.3048" layer="1"/>
 <wire x1="25.358" y1="32.216" x2="25.358" y2="30.636" width="0.3048" layer="1"/>
 </signal>
 <signal name="OIL">
