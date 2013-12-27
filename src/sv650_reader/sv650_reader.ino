@@ -1,5 +1,5 @@
 /* 
- * Copyright 2013 (c) Aaron Turner
+ * Copyright 2014 (c) Aaron Turner
  * This code is released under the GPLv3 license.  Please see the LICENSE file 
  * for details.
  *
@@ -59,7 +59,7 @@ ST6961 led = ST6961(MOSI, CLK, CS);
  ****************************************************************************/
 void 
 setup() {
-    unsigned i = 0;
+    int i = 0;
 
     // initialize serial communication to the ECU
     ecu.begin(ECU_SPEED);
@@ -254,6 +254,9 @@ parse_message() {
         // see if we're at the end of the error_table[]
         if (error_table[next_idx].bindex == 0xff) {
             next_idx = 0;
+#ifdef DEBUG 
+            serial_printf("next_idx = 0\n");
+#endif
         } else {
             have_previous_error = 1;
         }
@@ -290,7 +293,6 @@ parse_message() {
             efi_alarm = 0;
         }
 
-
         /* 
          * print errors on display if:
          * 1. dealer mode is enabled 
@@ -298,7 +300,7 @@ parse_message() {
          * 2. ALWAYS_SHOW_ERRORS == 1 is set and there is an error 
          */
         if ((efi_alarm && ALWAYS_SHOW_ERRORS) || ((sbytes[DEALER_BINDEX] & DEALER_MASK) == DEALER_MASK)) {
-            print_led_error(tps_adjust, error);
+            print_led_error(tps_adjust, error, efi_alarm);
         }
     }
 }

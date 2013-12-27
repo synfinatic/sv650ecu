@@ -1,3 +1,11 @@
+/* 
+ * Copyright 2013-2014 (c) Aaron Turner
+ * This code is released under the GPLv3 license.  Please see the LICENSE file 
+ * for details.
+ *
+ * More information is available here: https://github.com/synfinatic/sv650ecu
+ */
+
 #ifndef SV650_READER_H
 #define SV650_READER_H
 
@@ -6,26 +14,28 @@
  * the ECU Decoder to behave
  */
 //#define ENABLE_TEMP         // Enable decoding temperature
-#define USE_CELCIUS         // Display in C, not F
+#define USE_CELCIUS           // Display in C, not F
+
 #define DECODE_ERRORS         // decode ECU codes to serial
 #define PRINT_DECODE 2000     // how often to decode error messages in ms
 #define ALWAYS_SHOW_ERRORS 1  /* Show error codes even if not in dealer mode:
                                * 1 = always show errors 
                                * 0 = only in dealer mode
                                */
-#define BLINK_MS 500          // how fast to blink status LED on the Teensy
+
+#define BLINK_MS 500          // how fast to blink EFI Warning light on no-data error
 
 /*
  * Debugging options.
  */
 //#define DEBUG_MESSAGE       // decode each 8 byte message as hex
-//#define DEBUG               // detailed debug
+#define DEBUG               // detailed debug
 //#define DEBUG_TIMING
 //#define DEBUG_TABLES        // Print our tables at startup via serial
 
-/*
- * Don't change these unless you really know what you're doing!
- */
+/****************************************************************************
+ * Don't anything below this point unless you really know what you are doing!
+ ****************************************************************************/
 #define ECU_SPEED 7800        // ECU serial speed
 
 #define SERIAL_SPEED 9600     // Always 9600, really 12Mhz!
@@ -149,11 +159,11 @@ PROGMEM prog_uchar display_table[] =
     0x3f , 0x06 , 0x5b , 0x4f , 0x66 , 0x6d , 0x7d , 0x07 , // 0-7
     0x7f , 0x6f , 0    , 0    , 0    , 0    , 0    , 0    , // 8 9
     0    , 0x77 , 0x7c , 0x58 , 0x5e , 0x79 , 0x71 , 0x7d , // A-G
-    0x76 , 0x06 , 0x07 , 0    , 0x34 , 0    , 0    , 0x3f , // H-O
+    0x76 , 0x06 , 0x07 , 0    , 0x38 , 0    , 0    , 0x3f , // H-O
     0x37 , 0    , 0    , 0x6d , 0x78 , 0xc3 , 0    , 0    , // P-W
     0    , 0    , 0    , 0x93 , 0    , 0xf0 , 0    , 0x80 , // [ ] _
     0    , 0x77 , 0x7c , 0x58 , 0x5e , 0x79 , 0x71 , 0x7d , // a-g
-    0x76 , 0x06 , 0x07 , 0    , 0x34 , 0    , 0    , 0x3f , // h-o
+    0x76 , 0x06 , 0x07 , 0    , 0x38 , 0    , 0    , 0x3f , // h-o
     0x37 , 0    , 0    , 0x6d , 0x87 , 0xc3 , 0    , 0    , // p-w
     0    , 0    , 0    , 0    , 0    , 0    , 0    , 0
 };

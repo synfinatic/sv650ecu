@@ -1,3 +1,11 @@
+/* 
+ * Copyright 2013-2014 (c) Aaron Turner
+ * This code is released under the GPLv3 license.  Please see the LICENSE file 
+ * for details.
+ *
+ * More information is available here: https://github.com/synfinatic/sv650ecu
+ */
+
 /*
  * Functions for writing to the Oasis 4 char 7 segment display
  */
@@ -78,17 +86,29 @@ display_char(int position, char digit)
  * Print error code to LED display from the table
  */
 void 
-print_led_error(char tps_adjust, int idx) {
+print_led_error(char tps_adjust, int idx, int efi_alarm) {
    int i = 0;
    byte led_digits[4] = { 0xc0, 0xc2, 0xc4, 0xc6 };
 
    led.sendDigit(led_digits[0], tps_adjust);
 
-    for (i = 1; i < 4; i++) {
-        led.sendDigit(led_digits[i], error_table[idx].led[i-1]);
-    } 
-}
+   if (efi_alarm == 0) {
+       // There is no alarm, but we got called (Dealer mode?) so 
+       // return the "no error" code.  Calculate index of "no error":
+       idx = sizeof(error_table) / sizeof(ECU_ERRORS) - 1;
+   } else if (idx < 0) {
+       // There is an alarm, but we don't know the code, so just return
+       return;
+   }
 
+#ifdef DEBUG 
+   serial_printf("printing error index: %d\n", idx);
+#endif
+
+   for (i = 1; i < 4; i++) {
+       led.sendDigit(led_digits[i], error_table[idx].led[i-1]);
+   } 
+}
 
 /*
  * Print water temp
