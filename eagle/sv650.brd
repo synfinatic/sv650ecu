@@ -131,13 +131,13 @@
 <hole x="50.546" y="29.464" drill="5.1562"/>
 <text x="6.858" y="33.782" size="1.524" layer="21" font="vector">SV650 ECU Decoder 4.1
 http://synfin.net/sv650ecu</text>
-<text x="35.306" y="35.052" size="1.778" layer="22" rot="MR0">S/N:</text>
-<rectangle x1="3.81" y1="32.766" x2="29.464" y2="38.862" layer="22"/>
+<text x="53.594" y="36.068" size="1.27" layer="22" rot="MR270">S/N:</text>
 <text x="14.986" y="50.038" size="1.27" layer="112">EFI</text>
 <text x="31.496" y="49.784" size="1.27" layer="112">Oil</text>
-<text x="48.26" y="49.784" size="1.27" layer="112">NTRL</text>
+<text x="49.022" y="49.276" size="1.27" layer="112">NTRL</text>
 <text x="40.894" y="37.846" size="1.27" layer="112">Fuel</text>
 <text x="29.464" y="32.258" size="1.016" layer="21">20131230</text>
+<rectangle x1="47.498" y1="36.322" x2="53.594" y2="51.308" layer="22"/>
 </plain>
 <libraries>
 <library name="linear">
