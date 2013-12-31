@@ -7881,11 +7881,6 @@ Metric Code Size 5664</description>
 <attribute name="MPN" value=""/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
-<part name="R5" library="resistor" deviceset="R-US_" device="M0805" value="22k">
-<attribute name="MF" value=""/>
-<attribute name="MPN" value="CRCW080522K0FKEA"/>
-<attribute name="OC_NEWARK" value="61M5466"/>
-</part>
 <part name="R6" library="resistor" deviceset="R-US_" device="M0805" value="10k">
 <attribute name="MF" value="VISHAY/DALE"/>
 <attribute name="MPN" value="CRCW080510K0FKTA"/>
@@ -7911,27 +7906,22 @@ Metric Code Size 5664</description>
 <part name="GND1" library="SparkFun" deviceset="GND" device=""/>
 <part name="SUPPLY1" library="supply2" deviceset="+12V" device=""/>
 <part name="SUPPLY2" library="supply2" deviceset="+12V" device=""/>
-<part name="R8" library="resistor" deviceset="R-US_" device="M0805" value="10k">
+<part name="R8" library="resistor" deviceset="R-US_" device="M0805" value="30k">
 <attribute name="MF" value="VISHAY/DALE"/>
 <attribute name="MPN" value="CRCW080510K0FKTA"/>
 <attribute name="OC_NEWARK" value="05F1511"/>
 </part>
-<part name="D6" library="adafruit" deviceset="DIODE" device="SOD-123" value="20V zener">
-<attribute name="MF" value="VISHAY/TELEFUNKEN"/>
-<attribute name="MPN" value="MMSZ5242B-V-GS08"/>
-<attribute name="OC_NEWARK" value="35K8677"/>
-</part>
 <part name="SUPPLY3" library="supply2" deviceset="+12V" device=""/>
 <part name="GND2" library="SparkFun" deviceset="GND" device=""/>
-<part name="D5" library="adafruit" deviceset="DIODE" device="SOD-123" value="5V zener">
-<attribute name="MF" value="VISHAY/TELEFUNKEN"/>
-<attribute name="MPN" value="MMSZ5242B-V-GS08"/>
-<attribute name="OC_NEWARK" value="35K8677"/>
-</part>
 <part name="C3" library="adafruit" deviceset="C-US" device="025-024X044" value=".1uF">
 <attribute name="MF" value=""/>
 <attribute name="MPN" value=""/>
 <attribute name="OC_NEWARK" value="unknown"/>
+</part>
+<part name="D5" library="adafruit" deviceset="DIODE" device="SOD-123" value="4.7V zener">
+<attribute name="MF" value="VISHAY/TELEFUNKEN"/>
+<attribute name="MPN" value="MMSZ5242B-V-GS08"/>
+<attribute name="OC_NEWARK" value="35K8677"/>
 </part>
 </parts>
 <sheets>
@@ -8004,11 +7994,6 @@ Metric Code Size 5664</description>
 <attribute name="MF" x="121.92" y="10.16" size="1.778" layer="96" display="off"/>
 <attribute name="MPN" x="121.92" y="10.16" size="1.778" layer="96" display="off"/>
 </instance>
-<instance part="R5" gate="G$1" x="2.54" y="101.6">
-<attribute name="OC_NEWARK" x="2.54" y="101.6" size="1.778" layer="96" display="off"/>
-<attribute name="MF" x="2.54" y="101.6" size="1.778" layer="96" display="off"/>
-<attribute name="MPN" x="2.54" y="101.6" size="1.778" layer="96" display="off"/>
-</instance>
 <instance part="R6" gate="G$1" x="-17.78" y="101.6">
 <attribute name="OC_NEWARK" x="-17.78" y="101.6" size="1.778" layer="96" display="off"/>
 <attribute name="MF" x="-17.78" y="101.6" size="1.778" layer="96" display="off"/>
@@ -8032,29 +8017,24 @@ Metric Code Size 5664</description>
 <instance part="GND6" gate="1" x="127" y="22.86" rot="R180"/>
 <instance part="U$9" gate="G$1" x="25.4" y="15.24"/>
 <instance part="GND1" gate="1" x="48.26" y="50.8"/>
-<instance part="SUPPLY1" gate="+12V" x="30.48" y="104.14"/>
+<instance part="SUPPLY1" gate="+12V" x="20.32" y="104.14"/>
 <instance part="SUPPLY2" gate="+12V" x="55.88" y="101.6"/>
-<instance part="R8" gate="G$1" x="22.86" y="101.6">
-<attribute name="OC_NEWARK" x="22.86" y="101.6" size="1.778" layer="96" display="off"/>
-<attribute name="MF" x="22.86" y="101.6" size="1.778" layer="96" display="off"/>
-<attribute name="MPN" x="22.86" y="101.6" size="1.778" layer="96" display="off"/>
-</instance>
-<instance part="D6" gate="G$1" x="10.16" y="93.98" rot="R90">
-<attribute name="OC_NEWARK" x="10.16" y="93.98" size="1.778" layer="96" display="off"/>
-<attribute name="MF" x="10.16" y="93.98" size="1.778" layer="96" display="off"/>
-<attribute name="MPN" x="10.16" y="93.98" size="1.778" layer="96" display="off"/>
+<instance part="R8" gate="G$1" x="5.08" y="101.6">
+<attribute name="OC_NEWARK" x="5.08" y="101.6" size="1.778" layer="96" display="off"/>
+<attribute name="MF" x="5.08" y="101.6" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="5.08" y="101.6" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="SUPPLY3" gate="+12V" x="154.94" y="109.22"/>
-<instance part="GND2" gate="1" x="-7.62" y="63.5"/>
-<instance part="D5" gate="G$1" x="-20.32" y="88.9">
-<attribute name="OC_NEWARK" x="-20.32" y="88.9" size="1.778" layer="96" rot="R270" display="off"/>
-<attribute name="MF" x="-20.32" y="88.9" size="1.778" layer="96" rot="R270" display="off"/>
-<attribute name="MPN" x="-20.32" y="88.9" size="1.778" layer="96" rot="R270" display="off"/>
-</instance>
+<instance part="GND2" gate="1" x="-27.94" y="63.5"/>
 <instance part="C3" gate="G$1" x="-17.78" y="76.2" rot="R270">
 <attribute name="OC_NEWARK" x="-17.78" y="76.2" size="1.778" layer="96" rot="R270" display="off"/>
 <attribute name="MF" x="-17.78" y="76.2" size="1.778" layer="96" rot="R270" display="off"/>
 <attribute name="MPN" x="-17.78" y="76.2" size="1.778" layer="96" rot="R270" display="off"/>
+</instance>
+<instance part="D5" gate="G$1" x="-20.32" y="88.9">
+<attribute name="OC_NEWARK" x="-20.32" y="88.9" size="1.778" layer="96" rot="R270" display="off"/>
+<attribute name="MF" x="-20.32" y="88.9" size="1.778" layer="96" rot="R270" display="off"/>
+<attribute name="MPN" x="-20.32" y="88.9" size="1.778" layer="96" rot="R270" display="off"/>
 </instance>
 </instances>
 <busses>
@@ -8138,23 +8118,18 @@ Metric Code Size 5664</description>
 <junction x="48.26" y="58.42"/>
 </segment>
 <segment>
-<wire x1="-27.94" y1="66.04" x2="-7.62" y2="66.04" width="0.1524" layer="91"/>
-<pinref part="D6" gate="G$1" pin="A"/>
-<wire x1="-7.62" y1="66.04" x2="10.16" y2="66.04" width="0.1524" layer="91"/>
-<wire x1="10.16" y1="66.04" x2="10.16" y2="91.44" width="0.1524" layer="91"/>
 <pinref part="GND2" gate="1" pin="GND"/>
-<junction x="-7.62" y="66.04"/>
+<pinref part="C3" gate="G$1" pin="2"/>
+<pinref part="D5" gate="G$1" pin="A"/>
 <pinref part="R6" gate="G$1" pin="1"/>
 <wire x1="-22.86" y1="101.6" x2="-27.94" y2="101.6" width="0.1524" layer="91"/>
 <wire x1="-27.94" y1="101.6" x2="-27.94" y2="88.9" width="0.1524" layer="91"/>
-<pinref part="D5" gate="G$1" pin="A"/>
-<wire x1="-22.86" y1="88.9" x2="-27.94" y2="88.9" width="0.1524" layer="91"/>
+<wire x1="-27.94" y1="88.9" x2="-22.86" y2="88.9" width="0.1524" layer="91"/>
 <wire x1="-27.94" y1="88.9" x2="-27.94" y2="76.2" width="0.1524" layer="91"/>
-<pinref part="C3" gate="G$1" pin="2"/>
-<wire x1="-27.94" y1="76.2" x2="-27.94" y2="66.04" width="0.1524" layer="91"/>
 <wire x1="-27.94" y1="76.2" x2="-22.86" y2="76.2" width="0.1524" layer="91"/>
-<junction x="-27.94" y="76.2"/>
+<wire x1="-27.94" y1="76.2" x2="-27.94" y2="66.04" width="0.1524" layer="91"/>
 <junction x="-27.94" y="88.9"/>
+<junction x="-27.94" y="76.2"/>
 </segment>
 </net>
 <net name="N$2" class="0">
@@ -8274,7 +8249,7 @@ Metric Code Size 5664</description>
 </net>
 <net name="+12V" class="0">
 <segment>
-<wire x1="27.94" y1="101.6" x2="30.48" y2="101.6" width="0.1524" layer="91"/>
+<wire x1="10.16" y1="101.6" x2="20.32" y2="101.6" width="0.1524" layer="91"/>
 <pinref part="SUPPLY1" gate="+12V" pin="+12V"/>
 <pinref part="R8" gate="G$1" pin="2"/>
 </segment>
@@ -8300,33 +8275,22 @@ Metric Code Size 5664</description>
 <label x="99.06" y="22.86" size="1.778" layer="95" xref="yes"/>
 </segment>
 <segment>
-<pinref part="R5" gate="G$1" pin="1"/>
-<pinref part="R6" gate="G$1" pin="2"/>
-<wire x1="-2.54" y1="101.6" x2="-10.16" y2="101.6" width="0.1524" layer="91"/>
-<label x="-2.54" y="73.66" size="1.778" layer="95" xref="yes"/>
-<wire x1="-10.16" y1="101.6" x2="-12.7" y2="101.6" width="0.1524" layer="91"/>
-<junction x="-10.16" y="101.6"/>
-<wire x1="-10.16" y1="73.66" x2="-2.54" y2="73.66" width="0.1524" layer="91"/>
-<wire x1="-10.16" y1="101.6" x2="-10.16" y2="88.9" width="0.1524" layer="91"/>
-<pinref part="D5" gate="G$1" pin="C"/>
-<wire x1="-10.16" y1="88.9" x2="-10.16" y2="76.2" width="0.1524" layer="91"/>
-<wire x1="-10.16" y1="76.2" x2="-10.16" y2="73.66" width="0.1524" layer="91"/>
-<wire x1="-10.16" y1="88.9" x2="-17.78" y2="88.9" width="0.1524" layer="91"/>
-<junction x="-10.16" y="88.9"/>
-<junction x="-10.16" y="76.2"/>
 <pinref part="C3" gate="G$1" pin="1"/>
-<wire x1="-10.16" y1="76.2" x2="-15.24" y2="76.2" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$13" class="0">
-<segment>
-<pinref part="R5" gate="G$1" pin="2"/>
+<wire x1="-7.62" y1="101.6" x2="0" y2="101.6" width="0.1524" layer="91"/>
+<wire x1="-7.62" y1="101.6" x2="-7.62" y2="88.9" width="0.1524" layer="91"/>
+<wire x1="-7.62" y1="88.9" x2="-7.62" y2="81.28" width="0.1524" layer="91"/>
+<wire x1="-7.62" y1="81.28" x2="-7.62" y2="76.2" width="0.1524" layer="91"/>
+<wire x1="-7.62" y1="76.2" x2="-15.24" y2="76.2" width="0.1524" layer="91"/>
+<label x="0" y="81.28" size="1.778" layer="95" xref="yes"/>
 <pinref part="R8" gate="G$1" pin="1"/>
-<wire x1="7.62" y1="101.6" x2="10.16" y2="101.6" width="0.1524" layer="91"/>
-<pinref part="D6" gate="G$1" pin="C"/>
-<wire x1="10.16" y1="101.6" x2="17.78" y2="101.6" width="0.1524" layer="91"/>
-<wire x1="10.16" y1="96.52" x2="10.16" y2="101.6" width="0.1524" layer="91"/>
-<junction x="10.16" y="101.6"/>
+<wire x1="-17.78" y1="88.9" x2="-7.62" y2="88.9" width="0.1524" layer="91"/>
+<pinref part="R6" gate="G$1" pin="2"/>
+<wire x1="-12.7" y1="101.6" x2="-7.62" y2="101.6" width="0.1524" layer="91"/>
+<wire x1="0" y1="81.28" x2="-7.62" y2="81.28" width="0.1524" layer="91"/>
+<pinref part="D5" gate="G$1" pin="C"/>
+<junction x="-7.62" y="81.28"/>
+<junction x="-7.62" y="88.9"/>
+<junction x="-7.62" y="101.6"/>
 </segment>
 </net>
 </nets>
