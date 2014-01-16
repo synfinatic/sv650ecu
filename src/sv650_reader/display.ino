@@ -52,17 +52,27 @@ display_chars(char digit1, char digit2, char digit3, char digit4)
 }
 
 /*
- *  Prints 4 hex characters on the 7 segment display
+ *  Prints 4 hex characters on the 7 segment display with colon
+ *  colon & 0x01 == high colon bit 
+ *  colon & 0x02 == low colon bit
  */
 void 
-display_values(char digit1, char digit2, char digit3, char digit4)
+display_values(char digit1, char digit2, char digit3, char digit4, int colon)
 {
 
     digitalWrite(CS,LOW);
     shiftOut(MOSI, CLK, LSBFIRST, DISPPOS[0]);
-    shiftOut(MOSI, CLK, LSBFIRST, digit1);
+    if (colon & 0x01) {
+        shiftOut(MOSI, CLK, LSBFIRST, digit1 | 0x80);
+    } else {
+        shiftOut(MOSI, CLK, LSBFIRST, digit1);
+    }
     shiftOut(MOSI, CLK, LSBFIRST, DISPPOS[1]);
-    shiftOut(MOSI, CLK, LSBFIRST, digit2);
+    if (colon & 0x02) {
+        shiftOut(MOSI, CLK, LSBFIRST, digit2 | 0x80);
+    } else {
+        shiftOut(MOSI, CLK, LSBFIRST, digit2);
+    }
     shiftOut(MOSI, CLK, LSBFIRST, DISPPOS[2]);
     shiftOut(MOSI, CLK, LSBFIRST, digit3);
     shiftOut(MOSI, CLK, LSBFIRST, DISPPOS[3]);
@@ -167,7 +177,7 @@ print_led_temp() {
         display[1] = get_display_hex(temp / 10);
 
     }
-    display_values(display[0], display[1], display[2], display[3]);
+    display_values(display[0], display[1], display[2], display[3], 0);
 }
 
 /*

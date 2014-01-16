@@ -32,8 +32,10 @@
 void clear_buf();
 void serial_printf(const char *fmt, ... );
 void parse_message();
+void print_battery_voltage();
 unsigned int check_csum();
 void blink(unsigned long time);
+char *ftoa(char *a, double f, int precision);
 
 /****************************************************************************
  * globals
@@ -117,6 +119,11 @@ setup() {
 
     Serial.println("READY!");
     ms_last = millis();
+
+#ifdef ENABLE_BATT_MONITOR 
+        print_battery_voltage();
+#endif
+
 }
 
 /****************************************************************************
@@ -209,7 +216,11 @@ loop() {
             blink(ms);
         } else if (efi_alarm == 0) {
             digitalWrite(EFI_WARN, LOW);
+#ifdef ENABLE_BATT_MONITOR 
+            print_battery_voltage();
+#endif
         }
+
     }
 }
 
@@ -377,5 +388,77 @@ serial_printf(const char *fmt, ... ) {
     vsnprintf(tmp, 128, fmt, args);
     va_end(args);
     Serial.print(tmp);
+}
+
+void 
+print_battery_voltage() {
+    double voltage, batt_voltage;
+    unsigned int batt_read, x;
+    char display[4];
+    char float_s[10];
+
+    batt_read = analogRead(BATT_MON);
+
+#ifdef DEBUG
+    serial_printf("analogRead battery: %u\n", batt_read);
+#endif
+
+    voltage = (double)batt_read * AREAD_TO_VOLT;
+
+#ifdef DEBUG
+    ftoa(float_s, voltage, 2);
+    serial_printf("voltage: %s\n", float_s);
+#endif
+
+    batt_voltage = (voltage * (R1 + R2)) / R2;
+
+#ifdef DEBUG 
+    ftoa(float_s, batt_voltage, 2);
+    serial_printf("Battery voltage = %s\n", float_s);
+#endif 
+
+    x = batt_voltage * 10.0;
+    batt_voltage = (float)x / 10.0;
+    
+    if (batt_voltage < 10.0) {
+        display[0] = 0;
+    } else {
+        display[0] = (int)batt_voltage / 10;
+    }
+    display[1] = (int)batt_voltage % 10;
+    display[2] = (batt_voltage - (int)batt_voltage) * 10;
+
+#ifdef DEBUG 
+    serial_printf("LED display voltage: %d%d%d%c\n", display[0],
+            display[1], display[2], 'V');
+#endif 
+
+    display[0] = get_display_hex(display[0]);
+    display[1] = get_display_hex(display[1]);
+    display[2] = get_display_hex(display[2]);
+    display[3] = get_display_char('V');
+    display_values(display[0], display[1], display[2], display[3], 0x02);
+}
+
+/*
+ * Float to ascii
+ * Since the sprintf() of the Arduino doesn't support floating point
+ * converstion, #include <stdlib.h> for itoa() and then use this function
+ * to do the conversion manually
+ */
+char 
+*ftoa(char *a, double f, int precision)
+{
+  long p[] = {
+    0,10,100,1000,10000,100000,1000000,10000000,100000000  };
+
+  char *ret = a;
+  long heiltal = (long)f;
+  itoa(heiltal, a, 10);
+  while (*a != '\0') a++;
+  *a++ = '.';
+  long desimal = abs((long)((f - heiltal) * p[precision]));
+  itoa(desimal, a, 10);
+  return ret;
 }
 

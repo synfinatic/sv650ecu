@@ -25,6 +25,9 @@
 
 #define BLINK_MS 500          // how fast to blink EFI Warning light on no-data error
 
+#define ENABLE_BATT_MONITOR   // Enable monitoring battery voltage
+#define BATT_VOLT_WARN 13.3   // Voltage to start warning at (float)
+
 /*
  * Debugging options.
  */
@@ -45,6 +48,12 @@
 #define MOSI 2 // B2
 #define RX 7   // D2  UART pins!
 #define TX 8   // D3 
+
+// Votage monitoring values
+#define BATT_MON A0
+#define R1 32000.0   // R5 + R8
+#define R2 10000.0   // R6
+#define AREAD_TO_VOLT 0.0049
 
 /*
  * Data struct to store all the ECU error code & meanings
@@ -160,11 +169,11 @@ PROGMEM prog_uchar display_table[] =
     0x7f , 0x6f , 0    , 0    , 0    , 0    , 0    , 0    , // 8 9
     0    , 0x77 , 0x7c , 0x58 , 0x5e , 0x79 , 0x71 , 0x7d , // A-G
     0x76 , 0x06 , 0x07 , 0    , 0x38 , 0    , 0    , 0x3f , // H-O
-    0x37 , 0    , 0    , 0x6d , 0x78 , 0xc3 , 0    , 0    , // P-W
+    0x37 , 0    , 0    , 0x6d , 0x78 , 0xc3 , 0x1c , 0    , // P-W
     0    , 0    , 0    , 0x93 , 0    , 0xf0 , 0    , 0x80 , // [ ] _
     0    , 0x77 , 0x7c , 0x58 , 0x5e , 0x79 , 0x71 , 0x7d , // a-g
     0x76 , 0x06 , 0x07 , 0    , 0x38 , 0    , 0    , 0x3f , // h-o
-    0x37 , 0    , 0    , 0x6d , 0x87 , 0xc3 , 0    , 0    , // p-w
+    0x37 , 0    , 0    , 0x6d , 0x87 , 0xc3 , 0x1c,  0    , // p-w
     0    , 0    , 0    , 0    , 0    , 0    , 0    , 0
 };
 
