@@ -8038,7 +8038,8 @@ Metric Code Size 5664</description>
 <sheet>
 <plain>
 <text x="114.3" y="68.58" size="1.778" layer="91" rot="R90">To Wiring Harness</text>
-<text x="58.42" y="111.76" size="1.778" layer="91">650 ECU Decoder v4.1</text>
+<text x="58.42" y="111.76" size="1.778" layer="91">650 ECU Decoder v4.2
+20140309</text>
 </plain>
 <instances>
 <instance part="IC1" gate="A1" x="71.12" y="93.98">
@@ -8481,4 +8482,10 @@ Metric Code Size 5664</description>
 </sheets>
 </schematic>
 </drawing>
+<compatibility>
+<note version="6.3" minversion="6.2.2" severity="warning">
+Since Version 6.2.2 text objects can contain more than one line,
+which will not be processed correctly with this version.
+</note>
+</compatibility>
 </eagle>
