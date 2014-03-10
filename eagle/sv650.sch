@@ -5135,9 +5135,9 @@ https://github.com/buzzdavidson/OasisLED</description>
 <wire x1="0" y1="19.05" x2="50.165" y2="19.05" width="0.127" layer="21"/>
 </package>
 <package name="R13-509A-05-BB/R13-509A-05-BR">
-<circle x="0" y="0" radius="3.5005125" width="0.127" layer="21"/>
-<pad name="P$1" x="-2" y="0" drill="2" diameter="2.54" shape="long" rot="R90"/>
-<pad name="P$2" x="2" y="0.03" drill="2" diameter="2.54" shape="long" rot="R90"/>
+<circle x="0" y="0" radius="5.2324" width="0.127" layer="21"/>
+<pad name="P$1" x="-2" y="0" drill="2" diameter="2.54" shape="octagon" rot="R90"/>
+<pad name="P$2" x="2" y="0.03" drill="2" diameter="2.54" shape="octagon" rot="R90"/>
 </package>
 </packages>
 <symbols>
@@ -5449,13 +5449,13 @@ In this library the device names are the same as the pin names of the symbols, t
 <rectangle x1="-0.15" y1="0.6" x2="0.15" y2="0.8" layer="51"/>
 </package>
 <package name="SOD-123">
-<wire x1="-1" y1="0.7" x2="1" y2="0.7" width="0.1524" layer="51"/>
-<wire x1="1" y1="0.7" x2="1" y2="-0.7" width="0.1524" layer="51"/>
-<wire x1="1" y1="-0.7" x2="-1" y2="-0.7" width="0.1524" layer="51"/>
-<wire x1="-1" y1="-0.7" x2="-1" y2="0.7" width="0.1524" layer="51"/>
-<wire x1="-0.5" y1="0" x2="0.1" y2="0.4" width="0.1524" layer="51"/>
-<wire x1="0.1" y1="0.4" x2="0.1" y2="-0.4" width="0.1524" layer="51"/>
-<wire x1="0.1" y1="-0.4" x2="-0.5" y2="0" width="0.1524" layer="51"/>
+<wire x1="-1" y1="0.7" x2="1" y2="0.7" width="0.1524" layer="21"/>
+<wire x1="1" y1="0.7" x2="1" y2="-0.7" width="0.1524" layer="21"/>
+<wire x1="1" y1="-0.7" x2="-1" y2="-0.7" width="0.1524" layer="21"/>
+<wire x1="-1" y1="-0.7" x2="-1" y2="0.7" width="0.1524" layer="21"/>
+<wire x1="-0.5" y1="0" x2="0.1" y2="0.4" width="0.1524" layer="21"/>
+<wire x1="0.1" y1="0.4" x2="0.1" y2="-0.4" width="0.1524" layer="21"/>
+<wire x1="0.1" y1="-0.4" x2="-0.5" y2="0" width="0.1524" layer="21"/>
 <wire x1="-1.778" y1="0.762" x2="1.778" y2="0.762" width="0.127" layer="21"/>
 <wire x1="1.778" y1="0.762" x2="1.778" y2="-0.762" width="0.127" layer="21"/>
 <wire x1="1.778" y1="-0.762" x2="-1.778" y2="-0.762" width="0.127" layer="21"/>
@@ -5464,7 +5464,7 @@ In this library the device names are the same as the pin names of the symbols, t
 <smd name="A" x="1.85" y="0" dx="1.2" dy="0.7" layer="1"/>
 <text x="-1.1" y="1" size="0.4064" layer="25">&gt;NAME</text>
 <text x="-1.1" y="-1.284" size="0.4064" layer="27">&gt;VALUE</text>
-<rectangle x1="-0.7" y1="-0.7" x2="-0.5" y2="0.7" layer="51"/>
+<rectangle x1="-0.7" y1="-0.7" x2="-0.5" y2="0.7" layer="21"/>
 </package>
 <package name="SOD-323F">
 <wire x1="-0.85" y1="0.65" x2="0.85" y2="0.65" width="0.127" layer="21"/>
@@ -7921,7 +7921,7 @@ Metric Code Size 5664</description>
 <attribute name="MPN" value=""/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
-<part name="_1" library="teensy" deviceset="TEENSY" device="">
+<part name="_1" library="teensy" deviceset="TEENSY" device="" value="IC2">
 <attribute name="MF" value=""/>
 <attribute name="MPN" value=""/>
 <attribute name="OC_NEWARK" value="unknown"/>
@@ -8026,7 +8026,7 @@ Metric Code Size 5664</description>
 <part name="U$11" library="SparkFun" deviceset="5V" device=""/>
 <part name="U$10" library="synfinatic" deviceset="R13-509A-05-BB/R13-509A-05-BR" device=""/>
 <part name="SUPPLY4" library="supply2" deviceset="+12V" device=""/>
-<part name="JP1" library="jumper" deviceset="JP1Q" device=""/>
+<part name="JP1" library="jumper" deviceset="JP1Q" device="" value=" "/>
 <part name="R7" library="resistor" deviceset="R-US_" device="M0805" value="10k">
 <attribute name="MF" value="VISHAY/DALE"/>
 <attribute name="MPN" value="CRCW080510K0FKTA"/>
@@ -8468,12 +8468,12 @@ Metric Code Size 5664</description>
 <label x="139.7" y="25.4" size="1.778" layer="95" rot="R270" xref="yes"/>
 <pinref part="JP1" gate="A" pin="1"/>
 <wire x1="137.16" y1="33.02" x2="137.16" y2="38.1" width="0.1524" layer="91"/>
+<junction x="139.7" y="33.02"/>
 </segment>
 <segment>
-<pinref part="_1" gate="G$1" pin="_F1"/>
-<label x="96.52" y="17.78" size="1.778" layer="95" xref="yes"/>
-<wire x1="91.44" y1="20.32" x2="96.52" y2="20.32" width="0.1524" layer="91"/>
-<wire x1="96.52" y1="20.32" x2="96.52" y2="17.78" width="0.1524" layer="91"/>
+<pinref part="_1" gate="G$1" pin="_D0"/>
+<wire x1="66.04" y1="53.34" x2="60.96" y2="53.34" width="0.1524" layer="91"/>
+<label x="60.96" y="53.34" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 </nets>
