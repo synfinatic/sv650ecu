@@ -63,6 +63,9 @@ void
 setup() {
     int i = 0;
 
+    // Make sure BATT_MON pin is INPUT or we'll fry the board
+    pinMode(BATT_MON, INPUT);
+
     // initialize serial communication to the ECU
     ecu.begin(ECU_SPEED);
     Serial.begin(SERIAL_SPEED);
@@ -86,7 +89,6 @@ setup() {
 
     // we control the EFI warning LED
     pinMode(EFI_WARN, OUTPUT);
-    pinMode(BATT_MON, INPUT);
 
     clear_buf();
    
