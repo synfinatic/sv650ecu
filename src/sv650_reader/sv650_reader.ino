@@ -86,6 +86,7 @@ setup() {
 
     // we control the EFI warning LED
     pinMode(EFI_WARN, OUTPUT);
+    pinMode(BATT_MON, INPUT);
 
     clear_buf();
    
