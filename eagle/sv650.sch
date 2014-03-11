@@ -8039,7 +8039,7 @@ Metric Code Size 5664</description>
 <plain>
 <text x="114.3" y="68.58" size="1.778" layer="91" rot="R90">To Wiring Harness</text>
 <text x="58.42" y="111.76" size="1.778" layer="91">650 ECU Decoder v4.2
-20140309</text>
+20140310</text>
 </plain>
 <instances>
 <instance part="IC1" gate="A1" x="71.12" y="93.98">
@@ -8337,8 +8337,8 @@ Metric Code Size 5664</description>
 </segment>
 <segment>
 <pinref part="_1" gate="G$1" pin="_D2"/>
-<wire x1="66.04" y1="48.26" x2="60.96" y2="48.26" width="0.1524" layer="91"/>
-<label x="60.96" y="48.26" size="1.778" layer="95" rot="R180" xref="yes"/>
+<wire x1="66.04" y1="48.26" x2="60.96" y2="45.72" width="0.1524" layer="91"/>
+<label x="60.96" y="45.72" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="FUEL" class="0">
@@ -8446,9 +8446,9 @@ Metric Code Size 5664</description>
 <label x="-2.54" y="45.72" size="1.778" layer="95" xref="yes"/>
 </segment>
 <segment>
-<pinref part="_1" gate="G$1" pin="_C6"/>
-<wire x1="66.04" y1="12.7" x2="60.96" y2="12.7" width="0.1524" layer="91"/>
-<label x="60.96" y="12.7" size="1.778" layer="95" rot="R180" xref="yes"/>
+<pinref part="_1" gate="G$1" pin="_D1"/>
+<wire x1="66.04" y1="50.8" x2="60.96" y2="50.8" width="0.1524" layer="91"/>
+<label x="60.96" y="50.8" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="LOWFUEL2" class="0">
@@ -8473,8 +8473,8 @@ Metric Code Size 5664</description>
 </segment>
 <segment>
 <pinref part="_1" gate="G$1" pin="_D0"/>
-<wire x1="66.04" y1="53.34" x2="60.96" y2="53.34" width="0.1524" layer="91"/>
-<label x="60.96" y="53.34" size="1.778" layer="95" rot="R180" xref="yes"/>
+<wire x1="66.04" y1="53.34" x2="60.96" y2="55.88" width="0.1524" layer="91"/>
+<label x="60.96" y="55.88" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 </nets>
