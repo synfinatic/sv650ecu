@@ -43,7 +43,7 @@ char *ftoa(char *a, double f, int precision);
 
 // pins we don't use on the Teensy board
 char unused_pins[] = { 
-    3, 4, 5, 6, 9, 10, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24 
+    3, 4, 5, 6, 9, 10, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 23, 24 
 };
 
 unsigned long ms_last;     // last time we saw a message
@@ -211,6 +211,7 @@ loop() {
             byte_idx = 1;
         } else {
             serial_printf("Crazy.. really long delay! %lums\n", delta);
+            print_led_bad_efi();
         }
         ms_last = ms;
     } else {
@@ -399,6 +400,17 @@ print_battery_voltage() {
     unsigned int batt_read, x;
     char display[4];
     char float_s[10];
+    static unsigned long ms_last = millis();
+    unsigned long now = millis();
+    static int first = 1;
+
+    // Only update every BATT_VOLT_DELAY ms
+    if (first || ((ms_last + BATT_VOLT_DELAY) < now)) {
+        ms_last = now;
+        first = 0;
+    } else {
+        return;
+    }
 
     batt_read = analogRead(BATT_MON);
 
@@ -406,7 +418,7 @@ print_battery_voltage() {
     serial_printf("analogRead battery: %u\n", batt_read);
 #endif
 
-    voltage = (double)batt_read * AREAD_TO_VOLT;
+    voltage = ((double)batt_read * AREAD_TO_VOLT) + ZENER_DROP_VOLTAGE;
 
 #ifdef DEBUG
     ftoa(float_s, voltage, 2);

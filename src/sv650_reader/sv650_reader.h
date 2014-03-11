@@ -25,8 +25,9 @@
 
 #define BLINK_MS 500          // how fast to blink EFI Warning light on no-data error
 
-#define ENABLE_BATT_MONITOR   // Enable monitoring battery voltage
-#define BATT_VOLT_WARN 13.3   // Voltage to start warning at (float)
+#define ENABLE_BATT_MONITOR    // Enable monitoring battery voltage
+#define BATT_VOLT_WARN 13.3    // Voltage to start warning at (float)
+#define BATT_VOLT_DELAY 1000   // Check battery voltage every XXXXms
 
 /*
  * Debugging options.
@@ -48,12 +49,24 @@
 #define MOSI 2 // B2
 #define RX 7   // D2  UART pins!
 #define TX 8   // D3 
+#define MODE 9 // C6
 
 // Votage monitoring values
 #define BATT_MON A0
 #define R1 32000.0   // R5 + R8
 #define R2 10000.0   // R6
 #define AREAD_TO_VOLT 0.0049
+#define ZENER_DROP_VOLTAGE 0.3 // How much the Zener drops the voltage we see
+
+/*
+ *  Mode button
+ */
+enum mode {
+    MODE_NONE,
+    MODE_BATTERY,
+    MODE_TEMP,
+    MODE_ERROR
+}
 
 /*
  * Data struct to store all the ECU error code & meanings
