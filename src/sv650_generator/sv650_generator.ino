@@ -1,14 +1,17 @@
 /* 
  * Copyright 2013 Aaron Turner
  *
- * Arduino based SV650 ECU TACH line emulator.  I wrote this to 
+ * Arduino Uno based SV650 ECU TACH line emulator.  I wrote this to 
  * make it easier to test my sv650 decoder code.  
  *
- * To support 7800 baud, you have to hack your SoftwareSerial.cpp file
- * and add this to the 16Mhz struct:
- *     { 7800,     138,       291,       291,      287,   },
  */
-#include <SoftwareSerial.h>
+
+// #define USE_TEENSY  // Define if using Teensy instead of Arduino Uno
+
+#ifndef USE_TEENSY
+#include <SWSerial7800.h>
+#endif
+
 #include <ST6961.h>
 #define CS 10
 #define MOSI 11
@@ -16,24 +19,24 @@
 
 #define RX 7
 #define TX 8                // ECU pin  
-#define BUTTON 4
+#define BUTTON 2
+#define INTERRUPT 0         // INT for pin 2
 
 #define ECU_SPEED 7800
-#define SERIAL_SPEED 115200
+#define SERIAL_SPEED 9600
 #define BLINK_LED 13 
 #define BLINK_MS 500
+#define DEBOUNCE_MS 1000
 
-int buttonState;             // the current reading from the input pin
-int lastButtonState = LOW;   // the previous reading from the input pin
-
-// the following variables are long's because the time, measured in miliseconds,
-// // will quickly become a bigger number than can be stored in an int.
-long lastDebounceTime = 0;  // the last time the output pin was toggled
-long debounceDelay = 50;    // the debounce time; increase if the output flickers
+volatile bool change_ecu_code = 0;
 
 
-// init SoftwareSerial for ECU communications.  Need to keep ecu global
-SoftwareSerial ecu(RX, TX);
+#ifndef USE_TEENSY
+// init SWSerial7800 for ECU communications.  Need to keep ecu global
+SWSerial7800 ecu(RX, TX);
+#else
+HardwareSerial ecu = HardwareSerial();
+#endif
 ST6961 LED(MOSI, CLK, CS);
 
 
@@ -46,19 +49,13 @@ typedef struct _ECU_CODES {
 
 static ECU_CODES ecu_codes_table[] =
 {
-    { 0x5a , 0x10 , 0x0  , 0    , 0    , 0    , 0    , 0 }    , 
-    { 0x1c , 0xc0 , 0x0  , 0    , 0    , 0    , 0    , 0 }    , 
-    { 0x10 , 0xc0 , 0x0  , 0    , 0    , 0    , 0    , 0 }    , 
-    { 0x2c , 0xc8 , 0x0  , 0    , 0x40 , 0    , 0    , 0 }    , 
-    { 0x2c , 0xc8 , 0x80 , 0    , 0    , 0    , 0    , 0 }    , 
-    { 0x2c , 0xc8 , 0x80 , 0    , 0xa0 , 0    , 0    , 0 }    , 
+    { 0x5a , 0x0  , 0x0  , 0    , 0    , 0    , 0    , 0 }    ,  // 100F
+    { 0x1c , 0xc0 , 0x0  , 0    , 0    , 0    , 0    , 0 }    ,  // 184F
+    { 0x10 , 0xc0 , 0x0  , 0    , 0    , 0    , 0    , 0 }    ,  // 227F
+    { 0x2c , 0xc8 , 0x0  , 0    , 0x40 , 0    , 0    , 0 }    ,  // 227F, C29
+    { 0x0a , 0x08 , 0x80 , 0    , 0    , 0    , 0    , 0 }    ,  // HI F, C41
+    { 0x2c , 0xc8 , 0x80 , 0    , 0xa0 , 0    , 0    , 0 }    ,  // 153F, C28, C41, C49
     { 0xff , 0xff , 0xff , 0xff , 0xff , 0xff , 0xff , 0xff }
-};
-
-// How long to show each error code
-static unsigned int code_times[] = 
-{
-    4000, 3000, 3000, 6000, 6000, 10000
 };
 
 
@@ -90,6 +87,21 @@ gen_csum(unsigned int code) {
     return check_sum;
 }
 
+void
+button_interrupt(void)
+{
+    static unsigned long last_time = 0;
+    unsigned long now;
+
+    now = millis();
+    if ((last_time + DEBOUNCE_MS) < now) {
+        change_ecu_code = 1;
+        last_time = now;
+    }
+}
+
+
+
 /*
  *  Initialize everything
  */
@@ -98,13 +110,13 @@ setup() {
     unsigned int i = 0;
     ecu.begin(ECU_SPEED);
     Serial.begin(SERIAL_SPEED);
-    pinMode(BUTTON, INPUT);
+    pinMode(BUTTON, INPUT_PULLUP);
+    attachInterrupt(INTERRUPT, button_interrupt, FALLING);
+
 
     // calc checksums for all the messages
     while (ecu_codes_table[i].bytes[0] != 0xff) {
-        serial_printf("calculating checksum for %u\n", i);
         ecu_codes_table[i].bytes[7] = gen_csum(i);
-        serial_printf("OK\n");
         i++;
     }
     serial_printf("Sending: %02x %02x %02x %02x %02x %02x %02x %02x\n", 
@@ -136,8 +148,25 @@ void
 loop() {
     int x;
     static unsigned int ecu_code = 0;
-    static unsigned long message_ms = millis();
-    unsigned long now;
+
+    if (change_ecu_code) {
+        serial_printf("%s", "button pressed!\n");
+        change_ecu_code = 0;
+        if (ecu_codes_table[ecu_code+1].bytes[0] == 0xff) {
+            ecu_code = 0;
+        } else {
+            ecu_code ++;
+        }
+        serial_printf("Sending: %02x %02x %02x %02x %02x %02x %02x %02x\n", 
+            ecu_codes_table[ecu_code].bytes[0], 
+            ecu_codes_table[ecu_code].bytes[1], 
+            ecu_codes_table[ecu_code].bytes[2], 
+            ecu_codes_table[ecu_code].bytes[3], 
+            ecu_codes_table[ecu_code].bytes[4], 
+            ecu_codes_table[ecu_code].bytes[5], 
+            ecu_codes_table[ecu_code].bytes[6], 
+            ecu_codes_table[ecu_code].bytes[7]);
+    }
 
     // Write data bytes to serial
     for (x = 0; x <= 7; x++) {
@@ -148,27 +177,4 @@ loop() {
     // Intermessage delay
     delay(20);  // only use 20ms because we already slept 10ms earlier
     blink();
-
-
-    // Do we go to the next message?
-    now = millis();
-    if (now >= message_ms + code_times[ecu_code]) {
-        message_ms = now;
-        // go to next code
-        if (ecu_codes_table[ecu_code+1].bytes[0] == 0xff) {
-            ecu_code = 0;
-        } else {
-            ecu_code ++;
-        }
-        serial_printf("Sending for %ums: %02x %02x %02x %02x %02x %02x %02x %02x\n", 
-            code_times[ecu_code],
-            ecu_codes_table[ecu_code].bytes[0], 
-            ecu_codes_table[ecu_code].bytes[1], 
-            ecu_codes_table[ecu_code].bytes[2], 
-            ecu_codes_table[ecu_code].bytes[3], 
-            ecu_codes_table[ecu_code].bytes[4], 
-            ecu_codes_table[ecu_code].bytes[5], 
-            ecu_codes_table[ecu_code].bytes[6], 
-            ecu_codes_table[ecu_code].bytes[7]);
-    }
 }

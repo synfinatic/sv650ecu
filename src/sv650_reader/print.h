@@ -9,11 +9,9 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 
-byte get_display_char(char);
-byte get_display_hex(int);
-void display_chars(char, char, char, char);
-void display_values_colon(char, char, char, char, int);
-void display_values(char, char, char, char);
-void display_char(int, char);
+void print_led_error(char, int, int);
+int print_led_ecu();
+void print_led_bad_ecu();
+void print_battery_voltage();
 
 #endif

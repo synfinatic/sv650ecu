@@ -5,12 +5,14 @@
  * since the SV650 ECU has the ADC and it's up to the dash to convert
  * that into degrees F/C.  I used this with the OEM dash to figure out
  * what ADC values mapped to what temperatures.
- *
- * To support 7800 baud, you have to hack your SoftwareSerial.cpp file
- * and add this to the 16Mhz struct:
- *     { 7800,     138,       291,       291,      287,   },
  */
-#include <SoftwareSerial.h>
+
+// #define USE_TEENSY  // Define if using Teensy instead of Arduino Uno
+
+#ifndef USE_TEENSY
+#include <SWSerial7800.h>
+#endif
+
 #include <ST6961.h>
 #define CS 10
 #define MOSI 11
@@ -26,8 +28,12 @@
 #define BLINK_MS 500
 int sbytes[8];     // 7 bytes for serial data
 
-// init SoftwareSerial for ECU communications.  Need to keep ecu global
-SoftwareSerial ecu(RX, TX);
+// init SWSerial7800 for ECU communications.  Need to keep ecu global
+#ifndef USE_TEENSY
+SWSerial7800 ecu(RX, TX);
+#else
+HardwareSerial ecu = HardwareSerial()
+#endif
 ST6961 LED(MOSI, CLK, CS);
 
 

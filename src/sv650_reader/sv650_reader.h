@@ -13,63 +13,81 @@
  * Feel free to change these values based on how you want 
  * the ECU Decoder to behave
  */
-#define ENABLE_TEMP         // Enable decoding temperature
+#define ENABLE_TEMP           // Enable decoding water temp from the ECU
 //#define USE_CELCIUS           // Display in C, not F
-#define TEMP_WARN  230        // Temp in F to light EFI warning light
+#define TEMP_WARN   200       // Deg F/C when to light EFI lamp solid
+#define ENABLE_BATT           // Enable measuring the battery voltage level
 
 #define DECODE_ERRORS         // decode ECU codes to serial
-#define PRINT_DECODE 2000     // how often to decode error messages in ms
+#define DECODE_MS 1000        // how often to decode error messages in ms
 #define ALWAYS_SHOW_ERRORS 1  /* Show error codes even if not in dealer mode:
                                * 1 = always show errors 
                                * 0 = only in dealer mode
                                */
 
-#define BLINK_MS 500          // how fast to blink EFI Warning light on no-data error
+#define BLINK_MS 400          // how fast to blink EFI Warning light on no-data error
+#define TIMER_MS 50           // how often to update the LED display
 
-//#define ENABLE_BATT_MONITOR    // Enable monitoring battery voltage
 #define BATT_VOLT_WARN 12.5    // Voltage to start warning at (float)
 #define BATT_VOLT_DELAY 1000   // Check battery voltage every XXXXms
 
 /*
- * Debugging options.
+ * Debugging options for serial port.
  */
-// #define DEBUG_MESSAGE       // decode each 8 byte message as hex
-// #define DEBUG               // detailed debug
+#define DEBUG_MESSAGE       // decode each 8 byte message as hex
+#define DEBUG               // detailed debug 
 //#define DEBUG_TIMING
 //#define DEBUG_TABLES        // Print our tables at startup via serial
 
 /****************************************************************************
  * Don't anything below this point unless you really know what you are doing!
  ****************************************************************************/
-#define ECU_SPEED 7800        // ECU serial speed
-#define SERIAL_SPEED 9600     // Always 9600, really 12Mhz!
+#define ECU_SPEED 7800    // ECU serial speed
 
-// Pins we use.  Be sure to add to used_pins[]
-#define EFI_WARN 22           // EFI warning light
-#define CS 0   // B0
-#define CLK 1  // B1
-#define MOSI 2 // B2
-#define MODE 6 // D1
-#define RX 7   // D2  UART pins!
-#define TX 8   // D3 
+#define SERIAL_SPEED 9600 // Always 9600, really 12Mhz!
+#define EFI_WARN 22       // EFI warning light
+#define CS 0              // B0
+#define CLK 1             // B1
+#define MOSI 2            // B2
+#define MODE_PIN 6
+#define MODE_INT 1        // interrupt id for MODE_PIN
+#define RX 7              // D2  UART pins!
+#define TX 8              // D3
+
+// Debounce for the mode button
+#define DEBOUNCE_MS 250
+
+// Voltage monitoring values
 #define BATT_MON A0
+#define R1 30000.0             // R8
+#define R2 13300.0             // R6
+#define AREAD_TO_VOLT 0.0049
+#define ZENER_DROP_VOLTAGE 0.0 // 0.35 // How much the Zener drops the voltage we see
+
 #define FUEL_ADC A1
 #define FUEL2_ADC A2
 
-// Votage monitoring values
-#define R1 30000.0   // R8
-#define R2 13300.0   // R6
-#define AREAD_TO_VOLT 0.0049
-#define ZENER_DROP_VOLTAGE 0.0 // 0.3 // How much the Zener drops the voltage we see
+// Bitmask values for last_efi_light
+#define EFI_LIGHT_ALARM 1   
+#define EFI_LIGHT_BAD_ECU 2 
+#define EFI_LIGHT_LOW_BATT 4
+
+#define NO_ECU_WARN_DELAY 5000 // wait 5sec for no ECU messages before warning 
 
 /*
  *  Mode button
  */
 enum mode {
-    MODE_NONE,
-    MODE_BATTERY,
-    MODE_TEMP,
-    MODE_ERROR
+#ifdef ENABLE_TEMP
+    MODE_TEMP,        // current temp
+#endif
+#ifdef ENABLE_BATT
+    MODE_BATTERY,     // battery voltage
+#endif
+    MODE_EFI_ERROR,   // EFI Error code
+    MODE_BAD_ECU,     // No messages from EFI
+    MODE_LAST,        // Last marker
+    MODE_CLEAR,       // Display nothing
 };
 
 /*
@@ -127,6 +145,7 @@ static const ECU_ERRORS error_table[] =
     { 4, 0x08, { 0x39, 0x66, 0x66 }, "C44 O2 Sensor"  }, // SV1000
     { 0xff, 0xff, { 0x3f, 0x3f, 0x3f }, "000 No Error" }, // last entry!
 };
+
 
 /*
  * The ECU has an ADC to read the water temp sensor and sends values 

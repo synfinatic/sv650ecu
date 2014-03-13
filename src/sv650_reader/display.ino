@@ -13,6 +13,7 @@
 #include "sv650_reader.h"
 
 const char DISPPOS[4] = { 0xc0, 0xc2, 0xc4, 0xc6 };
+extern bool efi_alarm, bad_efi, low_batt;
 
 /*
  * Gets the LCD value for a given ASCII char
@@ -90,123 +91,5 @@ display_char(int position, char digit)
     shiftOut(MOSI, CLK, LSBFIRST, DISPPOS[position]);
     shiftOut(MOSI, CLK, LSBFIRST, get_display_char(digit));
     digitalWrite(CS,HIGH);    
-}
-
-/*
- * Print error code to LED display from the table
- */
-void 
-print_led_error(char tps_adjust, int idx, int efi_alarm) {
-   int i = 0;
-   byte led_digits[4] = { 0xc0, 0xc2, 0xc4, 0xc6 };
-
-   led.sendDigit(led_digits[0], tps_adjust);
-
-   if (efi_alarm == 0) {
-       // There is no alarm, but we got called (Dealer mode?) so 
-       // return the "no error" code.  Calculate index of "no error":
-       idx = sizeof(error_table) / sizeof(ECU_ERRORS) - 1;
-   } else if (idx < 0) {
-       // There is an alarm, but we don't know the code, so just return
-       return;
-   }
-
-#ifdef DEBUG 
-   serial_printf("printing error index: %d\n", idx);
-#endif
-
-   for (i = 1; i < 4; i++) {
-       led.sendDigit(led_digits[i], error_table[idx].led[i-1]);
-   } 
-}
-
-/*
- * Print water temp
- */
-int
-print_led_temp() {
-    unsigned int adc_value;
-    unsigned int temp, rettemp;
-    int holding;
-    char display[4];
-#ifdef USE_CELCIUS
-    float celcius;
-#endif
-
-    // temp is all of byte 0 and top two bits of byte 1
-    adc_value = sbytes[0] << 2;
-    adc_value += (sbytes[1] & 0xc0) >> 6;
-
-    /* 
-     * covert temp into a value fareinheit and then print it
-     */
-#ifdef USE_CELCIUS
-    display[3] = get_display_char('c');
-#else
-    display[3] = get_display_char('F');
-#endif
-    if (adc_value <= 42) {
-        // temp == HI 
-        display[0] = get_display_char('H');
-        display[1] = get_display_char('I');
-        display[2] = 0;
-    } else if (adc_value >= 525) {
-        // temp == LO (--- on stock display) 
-        display[0] = get_display_char('L'); 
-        display[1] = get_display_char('O'); 
-        display[2] = 0;
-    } else {
-        // temp == XXXF
-        temp = pgm_read_byte_near(temp_table + (adc_value - 42)) + 60;
-#ifdef USE_CELCIUS
-        // (F - 32) * 5/9 = C
-        celcius = (float)(temp - 32) * ((float)5/9);
-        temp = (unsigned int)celcius;
-#endif
-        serial_printf("temp is %u\n", temp);
-        rettemp = temp;
-
-        holding = temp % 10;
-        display[2] = get_display_hex(holding);
-        temp -= holding;
-        if (temp > 199) {
-            display[0] = get_display_hex(2);
-            temp -= 200;
-        } else if (temp > 99) {
-            display[0] = get_display_hex(1);
-            temp -= 100;
-        } else {
-            display[0] = 0;
-        }
-
-        display[1] = get_display_hex(temp / 10);
-
-    }
-    display_values(display[0], display[1], display[2], display[3], 0);
-    return rettemp;
-}
-
-/*
- * Notify user of bad Temp condition
- */
-void 
-print_led_bad_temp() {
-    char display[4] = { 'B', 'A', 'D', 'T' };  // BADT
-#ifdef DEBUG
-    serial_printf("print_led_bad_temp\n");
-#endif
-    display_chars(display[0], display[1], display[2], display[3]);
-}
-
-/*
- * Notify user of bad EFI condition
- */
-void 
-print_led_bad_efi() {
-    char display[4] = { 'B', 'A', 'D', 'E' };  // BADE
-#ifdef DEBUG
-    serial_printf("print_led_bad_efi\n");
-#endif
-    display_chars(display[0], display[1], display[2], display[3]);
 }
 

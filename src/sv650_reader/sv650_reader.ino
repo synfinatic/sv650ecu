@@ -10,12 +10,6 @@
  * running at 7800 BAUD.  Each message is 8 bytes.  10 messages/sec
  * 10ms gap between bytes, 30ms gap between messages
  *
- * To support 7800 baud, you have to hack your SoftwareSerial.cpp file
- * and add this to the 16Mhz struct:
- *     { 7800,     138,       291,       291,      287,   },
- * numbers are based off the info in this thread:
- * http://arduino.cc/forum/index.php/topic,138497.0.html
- *
  * This code is written for a PJRC Teensy 2.0
  */
 
@@ -23,88 +17,109 @@
 #include <ctype.h>
 #include <stdarg.h>
 #include <ST6961.h>
+#include <MsTimer2.h>
 #include <avr/pgmspace.h>
 
 #include "sv650_reader.h"
 #include "display.h"
+#include "print.h"
+#include "utils.h"
 
 // pre-declare our functions
-void clear_buf();
-void serial_printf(const char *fmt, ... );
-void parse_message();
-void print_battery_voltage();
-unsigned int check_csum();
-void blink(unsigned long time);
-char *ftoa(char *a, double f, int precision);
+void mode_button_interrupt();
+void print_led_display();
+void select_next_mode();
+void flash_update();
+void flash_fast_update();
+void no_flash_update();
 
 /****************************************************************************
  * globals
  ****************************************************************************/
 
 // pins we don't use on the Teensy board
-char used_pins[] = { 
-    EFI_WARN, CS, CLK, MOSI, MODE, RX, TX, BATT_MON, FUEL_ADC, FUEL2_ADC
+static char used_pins[] = { 
+    EFI_WARN, CS, CLK, MOSI, MODE_PIN, RX, TX, BATT_MON, FUEL_ADC, FUEL2_ADC
 };
 
-unsigned long ms_last;     // last time we saw a message
-int byte_idx = 0;          // message byte index
-byte sbytes[8];            // storage for our messages from the ECU
-bool efi_alarm = 0;        // true or false if we've seen an error code
-bool temp_alarm = 0;       // true or false if water temp is too high
+// Order of 4-LED display modes
+static const mode mode_list[] = {
+#ifdef ENABLE_TEMP
+    MODE_TEMP,
+#endif
+#ifdef ENABLE_BATT
+    MODE_BATTERY,
+#endif
+    MODE_EFI_ERROR,
+    MODE_BAD_ECU,
+    MODE_LAST
+};
+
+byte sbytes[8];              // storage for our messages from the ECU
+unsigned int last_efi_light = 0;
+bool efi_alarm = false;       // true or false if we've seen an error code
+bool bad_ecu   = false;         // true or false if we have EFI communication issues
+bool low_batt  = false;        // true or false for low voltage
+bool bad_temp  = false;        // true or flase for water temp too high
+#ifdef ENABLE_TEMP
+mode current_mode = MODE_TEMP;
+#elif defined ENABLE_TEMP
+mode current_mode = MODE_BATTERY;  // current 4-LED display mode
+#else
+mode current_mode = MODE_CLEAR;
+#endif
+volatile bool mode_button_pressed = false;
+char tps_adjust;
+int efi_error_code = -1;
+bool valid_message = false;
 
 // Init our hardware serial & LCD display
 HardwareSerial ecu = HardwareSerial();
 ST6961 led = ST6961(MOSI, CLK, CS);
-
 
 /****************************************************************************
  * main setup 
  ****************************************************************************/
 void 
 setup() {
-    int i = 0;
-    int j, is_output;
+    int i;
+    unsigned int j;
+
+    // initialize serial communication to the ECU
+    Serial.begin(SERIAL_SPEED);
+    Serial.println("begin setup()");
+    ecu.begin(ECU_SPEED);
 
     // Make sure BATT_MON pin is INPUT or we'll fry the board
     pinMode(BATT_MON, INPUT);
-    pinMode(MODE, INPUT);
-    pinMode(EFI_WARN, OUTPUT);
-    pinMode(FUEL_ADC, INPUT);
-    pinMode(FUEL2_ADC, INPUT);
+    
+    // attach interrupt handler for the mode button
+    pinMode(MODE_PIN, INPUT_PULLUP);
+    attachInterrupt(MODE_INT, mode_button_interrupt, FALLING);
 
-    // initialize serial communication to the ECU
-    ecu.begin(ECU_SPEED);
-    Serial.begin(SERIAL_SPEED);
+    // we control the EFI warning LED
+    pinMode(EFI_WARN, OUTPUT);
 
     // initalize the LED display
     led.initDisplay();
 
-    // count down through 0-9,a-f to look fancy and show it's working
-    for (i = 16; i >= 0; i--) {
-        led.sendDigits(0,0,0,i,0);
-        delay(100);
-    } 
-
     // clear display
-    led.initDisplay();
+    display_chars(' ', ' ', ' ', ' ');
 
     // Put unused pins in output mode so they don't float
     for (i = 0; i <= 24;  i++) {
-        is_output = 1;
         for (j = 0; j < sizeof(used_pins); j++) {
             if (i == used_pins[j]) {
-                is_output = 0;
+#ifdef DEBUG_TABLES
+                serial_printf("Marking pin #%d as OUTPUT\n", i);
+#endif
+                pinMode(i, OUTPUT);
                 break;
             }
         }
-        if (is_output) {
-#ifdef DEBUG_TABLES
-            serial_printf("Marking pin #%d as OUTPUT\n", i);
-#endif
-            pinMode(i, OUTPUT);
-        }
     } 
 
+    // clear sbytes[]
     clear_buf();
    
 #ifdef DEBUG_TABLES 
@@ -134,15 +149,11 @@ setup() {
     }
 #endif 
 
+    digitalWrite(EFI_WARN, LOW);
+    MsTimer2::start();
+    MsTimer2::set(TIMER_MS, no_flash_update);
 
     Serial.println("READY!");
-    ms_last = millis();
-
-#ifdef ENABLE_BATT_MONITOR 
-    print_battery_voltage();
-    delay(50000); 
-#endif
-
 }
 
 /****************************************************************************
@@ -150,354 +161,312 @@ setup() {
  ****************************************************************************/
 void 
 loop() {
-    unsigned long ms = 0;
-    unsigned long delta;
-    unsigned int csum;
+    static unsigned long ms_last = 0;     // last time we saw a message
+    unsigned long delta, now, parse_delta;
+    static bool efi_alarm_light_on = false;
+    static bool temp_alarm_light_on = false;
+    static unsigned long last_parse = 0;
     byte data;
-
-    if (ecu.available() > 0) {
-        // data is available to be read from the ECU
-        ms = millis();
-        data = (byte)ecu.read();
-        delta = ms - ms_last;
-
-        if (delta < 15) {
-#ifdef DEBUG_TIMING
-            serial_printf("Got %02x @ %lums (in time) for index: %d\n", data, delta, byte_idx);
-#endif
-            // data came in for our current message 
-            if (byte_idx <= 6) {
-                sbytes[byte_idx] = data;
-                byte_idx++;
-            } else if (byte_idx == 7) {
-                // reached end of message!
-                sbytes[byte_idx] = data;
-#ifdef DEBUG_MESSAGE
-                serial_printf("%02x %02x %02x %02x %02x %02x %02x %02x [%lums] CRC ", 
-                        sbytes[0], sbytes[1], sbytes[2], sbytes[3], 
-                        sbytes[4], sbytes[5], sbytes[6], sbytes[7], delta);
-#endif
-                csum = check_csum();
-                if (csum == 0xffff) {
-#ifdef DEBUG_MESSAGE
-                    Serial.print("OK\n");
-#endif
-                    // only decode the bytes to an error message if checksum is OK
-                    parse_message();
-
-                    // print TEMP to LED if there is no alarm
-#ifdef ENABLE_TEMP
-                    if (! efi_alarm) {
-                        csum = print_led_temp();
-                        if (csum >= TEMP_WARN) {
-                            digitalWrite(EFI_WARN, HIGH);
-                            temp_alarm = 1;
-                            serial_printf("lighting the lamp\n");
-                        } else if (temp_alarm) {
-                            digitalWrite(EFI_WARN, LOW);
-                            temp_alarm = 0;
-                        }
-                        
-                    }
-#endif
-                } 
-#ifdef DEBUG_MESSAGE
-                else {
-                    serial_printf("ERROR: 0x%04x\n", csum);
-                }
-#endif
-                byte_idx = 0;
-            } else {
-                serial_printf("ERROR: WTF???? byte_idx = %d\n", byte_idx);
-                byte_idx = 0;
-            }
-        } else if (delta < 35) {
-            // forced start of new message due to long wait
-
-#ifdef DEBUG_MESSAGE
-            if (byte_idx != 0) {
-                serial_printf("%02x %02x %02x %02x %02x %02x %02x %02x BAD LEN: %d [%lums]\n", 
-                        sbytes[0], sbytes[1], sbytes[2], sbytes[3], 
-                        sbytes[4], sbytes[5], sbytes[6], sbytes[7], byte_idx+1, delta);
-            }
-#endif
-
-            clear_buf();
-
-            if (byte_idx != 0) {
-                serial_printf("Got %02x @ %dms (late, forced restart) for index: %d\n", data, delta, -1);
-            } else {
-#ifdef DEBUG_TIMING
-                serial_printf("Got %02x @ %dms (in time) for index 0\n", data, delta);
-#endif
-            }
-
-            sbytes[0] = data;
-            byte_idx = 1;
-        } else {
-            serial_printf("Crazy.. really long delay! %lums\n", delta);
-            print_led_bad_efi();
-        }
-        ms_last = ms;
-    } else {
-        ms = millis() - ms_last;
-        if (ms > 1000) {
-            blink(ms);
-        } else if (! efi_alarm && ! temp_alarm) {
-            digitalWrite(EFI_WARN, LOW);
-#ifdef ENABLE_BATT_MONITOR 
-            print_battery_voltage();
-#endif
-        }
-    }
-}
-
-
-/*
- * parse message and decode error meanings
- */
-void
-parse_message() {
-    static unsigned int last_time = 0;
-    static int next_idx = 0;
-    int have_previous_error = 0;
-    unsigned int delta = 0;
-    unsigned int now;
-    int i;
-    int error = -1;
-    char tps_adjust = TPS_OK;
+    int count, i, valid;
 
     now = millis();
-    // First time
-    if (last_time == 0) {
-        last_time = now;
-    }
+    delta = now - ms_last;
+    parse_delta = now - last_parse;
 
-    delta = now - last_time;
-    // only update display/serial every PRINT_DECODE ms
-    if (delta >= PRINT_DECODE) {
-        last_time = now;
-        i = 0;
 
-        // first check the TPS sensor 
-        // we'll only print this if there is an error or we're in 
-        // dealer mode!
-        while (tps_table[i].bindex != 0xff) {
-            if ((sbytes[tps_table[i].bindex] & tps_table[i].mask) == tps_table[i].mask) {
-                tps_adjust = tps_table[i].led[0];
-                break;
-            }
-            i++;
-        }
+    count = ecu.available();
+    for (i = 0; i < count; i++) {
+        // data is available to be read from the ECU
+        data = (byte)ecu.read();
+        ms_last = now;
 
-        // see if we're at the end of the error_table[]
-        if (error_table[next_idx].bindex == 0xff) {
-            next_idx = 0;
-#ifdef DEBUG 
-            serial_printf("next_idx = 0\n");
-#endif
-        } else {
-            have_previous_error = 1;
-        }
-
-        // Then check for errors thrown by the ECU
-        while (error_table[next_idx].bindex != 0xff) {
-            // matching error
-            if ((sbytes[error_table[next_idx].bindex] & error_table[next_idx].mask) == error_table[next_idx].mask) {
-#ifdef DECODE_ERRORS
-                // print spacer line between each decode group
-                if (next_idx == 0) {
-                    serial_printf("************************\n");
-                }
-                serial_printf("[%d] %s\n", next_idx, error_table[next_idx].error);
-#endif 
-                error = next_idx;
-                next_idx++;
-                break;
-            }
-            next_idx++;
-        }
-
-        // Turn on EFI light if we have any errors other then dealer mode
-        if (error > 0) {
-            digitalWrite(EFI_WARN, HIGH);
-            efi_alarm = 1;
-#ifdef DECODE_ERRORS
-            serial_printf("%02x %02x %02x %02x %02x %02x %02x %02x Has errors!\n", 
-                    sbytes[0], sbytes[1], sbytes[2], sbytes[3], 
-                    sbytes[4], sbytes[5], sbytes[6], sbytes[7]);
-#endif
-        } else if (have_previous_error == 0) {
-            digitalWrite(EFI_WARN, LOW);
-            efi_alarm = 0;
-        }
-
-        /* 
-         * print errors on display if:
-         * 1. dealer mode is enabled 
-         * OR
-         * 2. ALWAYS_SHOW_ERRORS == 1 is set and there is an error 
+        /*
+         * Figure out if we got a complete & valid message
          */
-        if ((efi_alarm && ALWAYS_SHOW_ERRORS) || ((sbytes[DEALER_BINDEX] & DEALER_MASK) == DEALER_MASK)) {
-            print_led_error(tps_adjust, error, efi_alarm);
+        valid = parse_ecu_byte(data, delta);
+        if (valid == 0) {
+            valid_message = false;
+        } else if (valid == 1) {
+            valid_message = true;
         }
-    }
-}
 
-/*
- * Returns 0xffff on valid, or what the checksum should of been
- * (>= 0) for the given array
- */
-unsigned int 
-check_csum() {
-    byte check_sum = 0;
+        // only parse valid messages every DECODE_MS 
+        if ((valid != -1) && valid_message && (parse_delta >= DECODE_MS)) {
+            parse_message();
+            last_parse = now;
+            print_led_display();
+        }
 
-    // Calculate check sum byte  
-    for (int x = 0; x <= 6; x++) {
-        check_sum = check_sum + sbytes[x];
-    }
-
-    check_sum = 256 - check_sum;
-
-    if (check_sum == sbytes[7]) {
-        return 0xffff; // valid
-    } else {
-        return (unsigned int)check_csum; // invalid, return expected csum value
-    }
-}
-
-/*
- *  Blink our status light
- */
-void 
-blink(unsigned long time) {
-    static int hilo = 0;
-    static unsigned long last = 0;
-    unsigned int blink_time = BLINK_MS;
-    unsigned long delta;
-
-    // first time
-    if (last == 0) {
-        last = millis();
-    }
-
-    // blink faster if the EFI alarm is set
-    if (efi_alarm) {
-        blink_time /= 4;
-    }
-
-    delta = millis() - last;
-    if (delta >= blink_time) {
-        hilo = ! hilo;
-        digitalWrite(EFI_WARN, hilo);
-        last = millis();
-        if (hilo == HIGH) {
-            serial_printf("Missing data for %lu seconds\n", (unsigned long)(time / 1000));
+        /*
+         * Figure out which *_update() function to call via MsTimer2
+         */
+        if (bad_ecu) {
+            // Turn off the EFI light if necessary
+            dbg_serial_printf("ecu comms restored! Turning off light.\n");
+            bad_ecu = false;
+            MsTimer2::set(TIMER_MS, no_flash_update);
+            digitalWrite(EFI_WARN, LOW);
+        } else if (bad_temp && ! temp_alarm_light_on) {
+            // Temperature is too high, flash the light fast
+            dbg_serial_printf("bad temp.  Flashing fast.\n");
+            temp_alarm_light_on = true;
+            MsTimer2::set(TIMER_MS, flash_fast_update);
+        } else if (efi_alarm && ! efi_alarm_light_on) {
+            // We have an EFI error, so solid EFI light
+            dbg_serial_printf("efi alarm, solid light.\n");
+            efi_alarm_light_on = true;
+            MsTimer2::set(TIMER_MS, no_flash_update);
+            digitalWrite(EFI_WARN, HIGH);
+        }  else if (! efi_alarm && efi_alarm_light_on) {
+            // No longer have EFI error, so turn off the EFI light
+            dbg_serial_printf("efi alarms disabled.  Turning off light.\n");
+            efi_alarm_light_on = false;
+            MsTimer2::set(TIMER_MS, no_flash_update);
+            digitalWrite(EFI_WARN, LOW);
+        } else if (! bad_temp && temp_alarm_light_on) {
+            // Temperature is low again, stop flashing
+            dbg_serial_printf("temp is now ok.  Turning off light.\n");
+            temp_alarm_light_on = false;
+            MsTimer2::set(TIMER_MS, no_flash_update);
+            digitalWrite(EFI_WARN, LOW);
         }
     } 
-}
+    if (! count) {
+        // Check to see if ECU is not available
+        if ((delta > NO_ECU_WARN_DELAY) && ! bad_ecu) {
+            dbg_serial_printf("bad ecu comms.  Flashing slowly.\n");
+            bad_ecu = true;
+            MsTimer2::set(TIMER_MS, flash_update);
 
-
-// clears our message buffer
-void 
-clear_buf() {
-    int j;
-    for (j = 0; j < 8; j++) {
-        sbytes[j] = 0;
-    }
-}
-
-// printf to the HW serial port.  Note 128char limit!
-void 
-serial_printf(const char *fmt, ... ) {
-    char tmp[128]; // resulting string limited to 128 chars
-    va_list args;
-    va_start(args, fmt);
-    vsnprintf(tmp, 128, fmt, args);
-    va_end(args);
-    Serial.print(tmp);
-}
-
-void 
-print_battery_voltage() {
-    double voltage, batt_voltage;
-    unsigned int batt_read, x;
-    char display[4];
-    char float_s[10];
-    static unsigned long ms_last = millis();
-    unsigned long now = millis();
-    static int first = 1;
-
-    // Only update every BATT_VOLT_DELAY ms
-    if (first || ((ms_last + BATT_VOLT_DELAY) < now)) {
-        ms_last = now;
-        first = 0;
-    } else {
-        return;
+            // Clear any EFI alarm errors
+            efi_alarm = false;
+        }
     }
 
-    batt_read = analogRead(BATT_MON);
-
-#ifdef DEBUG
-    serial_printf("analogRead battery: %u\n", batt_read);
-#endif
-
-    voltage = ((double)batt_read * AREAD_TO_VOLT) + ZENER_DROP_VOLTAGE;
-
-#ifdef DEBUG
-    ftoa(float_s, voltage, 2);
-    serial_printf("voltage: %s\n", float_s);
-#endif
-
-    batt_voltage = (voltage * (R1 + R2)) / R2;
-
-#ifdef DEBUG 
-    ftoa(float_s, batt_voltage, 2);
-    serial_printf("Battery voltage = %s\n", float_s);
-#endif 
-
-    x = batt_voltage * 10.0;
-    batt_voltage = (float)x / 10.0;
-    
-    if (batt_voltage < 10.0) {
-        display[0] = 0;
-    } else {
-        display[0] = (int)batt_voltage / 10;
+    // always update the display if user pressed the mode button
+    if (mode_button_pressed) {
+        print_led_display();
     }
-    display[1] = (int)batt_voltage % 10;
-    display[2] = (batt_voltage - (int)batt_voltage) * 10;
-
-#ifdef DEBUG 
-    serial_printf("LED display voltage: %d%d%d%c\n", display[0],
-            display[1], display[2], 'V');
-#endif 
-
-    display[0] = get_display_hex(display[0]);
-    display[1] = get_display_hex(display[1]);
-    display[2] = get_display_hex(display[2]);
-    display[3] = get_display_char('V');
-    display_values(display[0], display[1], display[2], display[3], 0x02);
 }
 
 /*
- * Float to ascii
- * Since the sprintf() of the Arduino doesn't support floating point
- * converstion, #include <stdlib.h> for itoa() and then use this function
- * to do the conversion manually
+ * Just update the LED display
  */
-char 
-*ftoa(char *a, double f, int precision)
-{
-  long p[] = {
-    0,10,100,1000,10000,100000,1000000,10000000,100000000  };
-
-  char *ret = a;
-  long heiltal = (long)f;
-  itoa(heiltal, a, 10);
-  while (*a != '\0') a++;
-  *a++ = '.';
-  long desimal = abs((long)((f - heiltal) * p[precision]));
-  itoa(desimal, a, 10);
-  return ret;
+void
+no_flash_update() {
+    if (! valid_message) {
+        print_led_display();
+    }
 }
 
+/*
+ * Flash the EFI error really fast for bad temperature
+ * and update the LED display
+ */
+void 
+flash_fast_update() {
+    static boolean hilo = 0;
+    static unsigned long blink_time = 0;
+    unsigned long now;
+
+    now = millis();
+    if (blink_time == 0) {
+        blink_time = now + (BLINK_MS/4);
+    }
+
+    if (now > blink_time) {
+        blink_time = now + (BLINK_MS/4);
+        digitalWrite(EFI_WARN, hilo);
+        hilo = !hilo;
+    }
+
+    if (! valid_message) {
+        print_led_display();
+    }
+
+}
+
+/*
+ * Flash EFI error light & update the LED display
+ */
+void 
+flash_update() {
+    static boolean hilo = 0;
+    static unsigned long blink_time = 0;
+    unsigned long now;
+
+    now = millis();
+    if (blink_time == 0) {
+        blink_time = now + BLINK_MS;
+    }
+
+    if (now > blink_time) {
+        blink_time = now + BLINK_MS;
+        digitalWrite(EFI_WARN, hilo);
+        hilo = !hilo;
+    }
+    
+    if (! valid_message) {
+        print_led_display();
+    }
+}
+
+
+/*
+ * Figures out what mode the display should be after each button press
+ */
+void
+mode_button_interrupt()
+{
+    static unsigned long last_time = 0;
+    unsigned long now;
+
+    now = millis();
+    if ((last_time + DEBOUNCE_MS) < now) {
+        mode_button_pressed = true;
+        last_time = now;
+    }
+}
+
+/*
+ * Based on our current display mode, figure out what the next
+ * valid mode is
+ */
+void
+select_next_mode()
+{
+    bool again = true;
+    int max_times = 0;
+    static unsigned int mode_index = MODE_LAST;
+
+    dbg_serial_printf("select_next_mode(): Current mode: %u\t\t", current_mode);
+
+    max_times = MODE_CLEAR * 2;
+
+    while (again && max_times) {
+        if (mode_index >= MODE_LAST) {
+            mode_index = 0;
+        } else {
+            mode_index += 1;
+        }
+        current_mode = mode_list[mode_index];
+
+        // See if we need to look for the next mode
+        again = false;
+        if (((current_mode == MODE_BAD_ECU) && ! bad_ecu) ||
+            ((current_mode == MODE_EFI_ERROR) && ! efi_alarm)) {
+            again = true;
+        }
+        max_times -= 1;
+    }
+    if (again && ! max_times) {
+        current_mode = MODE_CLEAR;
+    }
+    dbg_serial_printf("New mode: %u\n", current_mode);
+}
+
+
+void
+clear_efi_light(unsigned int code)
+{
+    if ((last_efi_light & code) == code) {
+        last_efi_light -= code;
+    }
+}
+
+void
+set_efi_light(int code)
+{
+    if ((last_efi_light & code) == 0) {
+        last_efi_light += code;
+    }
+}
+
+/*
+ *  Figures out what to display on the 4-LED
+ */
+void
+print_led_display()
+{
+    static mode last_mode = MODE_LAST;
+
+    /*
+     * If a new bad condition (EFI error, no EFI communication or low battery)
+     * then switch to that display mode.  Order of the if/else sets the priority.
+     */
+    if (mode_button_pressed) {
+        mode_button_pressed = false;
+        dbg_serial_printf("Mode button pressed\n");
+        select_next_mode();
+    } else if (((last_efi_light & EFI_LIGHT_BAD_ECU) == 0) && bad_ecu) {
+        // bad efi enabled
+        current_mode = MODE_BAD_ECU;
+        set_efi_light(EFI_LIGHT_BAD_ECU);
+    } else if (((last_efi_light & EFI_LIGHT_ALARM) == 0) && efi_alarm) {
+        // efi error enabled
+        current_mode = MODE_EFI_ERROR;
+        set_efi_light(EFI_LIGHT_ALARM);
+#ifdef ENABLE_BATT
+    } else if (((last_efi_light & EFI_LIGHT_LOW_BATT) == 0) && low_batt) {
+        // low battery enabled
+        current_mode = MODE_BATTERY;
+        set_efi_light(EFI_LIGHT_LOW_BATT);
+#endif
+    } else if (((last_efi_light & EFI_LIGHT_BAD_ECU) == EFI_LIGHT_BAD_ECU) && ! bad_ecu) {
+        // clear bad efi alarm
+        clear_efi_light(EFI_LIGHT_BAD_ECU);
+        if (current_mode == MODE_BAD_ECU) {
+            current_mode = MODE_LAST;
+            select_next_mode();
+        }
+    } else if (((last_efi_light & EFI_LIGHT_ALARM) == EFI_LIGHT_ALARM) && ! efi_alarm) {
+        // clear efi alarm
+        clear_efi_light(EFI_LIGHT_ALARM);
+        if (current_mode == MODE_EFI_ERROR) {
+            current_mode = MODE_LAST;
+            select_next_mode();
+        }
+#ifdef ENABLE_BATT
+    } else if (((last_efi_light & EFI_LIGHT_LOW_BATT) == EFI_LIGHT_LOW_BATT) && ! low_batt) {
+        // clear low battery warning
+        clear_efi_light(EFI_LIGHT_LOW_BATT);
+        if (current_mode == MODE_BATTERY) {
+            current_mode = MODE_LAST;
+            select_next_mode();
+        }
+#endif
+    }
+
+#ifdef DEBUG
+    if (current_mode != last_mode) {
+        serial_printf("display mode changing! %d -> %d\n", last_mode, current_mode);
+    }
+#endif
+
+    switch (current_mode) {
+        case MODE_BAD_ECU:
+            print_led_bad_ecu();
+            break;
+        case MODE_EFI_ERROR:
+            dbg_serial_printf("Updating EFI error message 0x%04x\n", efi_error_code);
+            print_led_error(tps_adjust, efi_error_code, efi_alarm);
+            break;
+#ifdef ENABLE_BATT
+        case MODE_BATTERY:
+            print_battery_voltage();
+            break;
+#endif
+#ifdef ENABLE_TEMP
+        case MODE_TEMP:
+            if (print_led_temp() >= TEMP_WARN) {
+                bad_temp = true;
+            }
+            break;
+#endif
+        default:
+            serial_printf("Invalid current_mode %u.  Won't print anything\n",
+                    (unsigned int)current_mode);
+            select_next_mode();
+    }
+    last_mode = current_mode;
+}
