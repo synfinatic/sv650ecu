@@ -42,8 +42,8 @@ char *ftoa(char *a, double f, int precision);
  ****************************************************************************/
 
 // pins we don't use on the Teensy board
-char unused_pins[] = { 
-    3, 4, 5, 6, 9, 10, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 23, 24 
+char used_pins[] = { 
+    EFI_WARN, CS, CLK, MOSI, MODE, RX, TX
 };
 
 unsigned long ms_last;     // last time we saw a message
@@ -62,9 +62,12 @@ ST6961 led = ST6961(MOSI, CLK, CS);
 void 
 setup() {
     int i = 0;
+    int j, is_output;
 
     // Make sure BATT_MON pin is INPUT or we'll fry the board
     pinMode(BATT_MON, INPUT);
+    pinMode(MODE, INPUT);
+    pinMode(EFI_WARN, OUTPUT);
 
     // initialize serial communication to the ECU
     ecu.begin(ECU_SPEED);
@@ -72,11 +75,6 @@ setup() {
 
     // initalize the LED display
     led.initDisplay();
-
-    // Put unused pins in output mode so they don't float
-    for (i = 0; i < sizeof(unused_pins); i++) {
-       pinMode(unused_pins[i], OUTPUT);
-    } 
 
     // count down through 0-9,a-f to look fancy and show it's working
     for (i = 16; i >= 0; i--) {
@@ -87,8 +85,22 @@ setup() {
     // clear display
     led.initDisplay();
 
-    // we control the EFI warning LED
-    pinMode(EFI_WARN, OUTPUT);
+    // Put unused pins in output mode so they don't float
+    for (i = 0; i <= 24;  i++) {
+        is_output = 1;
+        for (j = 0; j < sizeof(used_pins); j++) {
+            if (i == used_pins[j]) {
+                is_output = 0;
+                break;
+            }
+        }
+        if (is_output) {
+#ifdef DEBUG_TABLES
+            serial_printf("Marking pin #%d as OUTPUT\n", i);
+#endif
+            pinMode(i, OUTPUT);
+        }
+    } 
 
     clear_buf();
    

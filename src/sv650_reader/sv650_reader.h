@@ -32,7 +32,7 @@
 /*
  * Debugging options.
  */
-//#define DEBUG_MESSAGE       // decode each 8 byte message as hex
+#define DEBUG_MESSAGE       // decode each 8 byte message as hex
 #define DEBUG               // detailed debug
 //#define DEBUG_TIMING
 //#define DEBUG_TABLES        // Print our tables at startup via serial
@@ -47,9 +47,9 @@
 #define CS 0   // B0
 #define CLK 1  // B1
 #define MOSI 2 // B2
+#define MODE 6 // D1
 #define RX 7   // D2  UART pins!
 #define TX 8   // D3 
-#define MODE 9 // C6
 
 // Votage monitoring values
 #define BATT_MON A0
@@ -66,7 +66,7 @@ enum mode {
     MODE_BATTERY,
     MODE_TEMP,
     MODE_ERROR
-}
+};
 
 /*
  * Data struct to store all the ECU error code & meanings
