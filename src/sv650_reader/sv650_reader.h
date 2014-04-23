@@ -92,9 +92,10 @@ static const ECU_ERRORS tps_table[] =
 };
 
 /*
- * Error table of all known SV650 error codes.
- * The commented out codes I believe are correct 
- * for a DL1000 but are untested
+ * Error table of all known SV650/SV1000 error codes.
+ * SV1000 uses SV650 codes plus a few more.  XXX: I've
+ * seen some references which might indicate the SV1000 
+ * codes are the same as DL1000, but need to verify
  */
 static const ECU_ERRORS error_table[] = 
 {
@@ -109,17 +110,17 @@ static const ECU_ERRORS error_table[] =
     { 2, 0x02, { 0x39, 0x5b, 0x6d }, "C25 IG Coil 2"  },
     { 2, 0x01, { 0x39, 0x5b, 0x66 }, "C24 IG Coil 1"  },
     { 3, 0x80, { 0x39, 0x5b, 0x4f }, "C23 Tip Over"   },
-    { 3, 0x40, { 0x39, 0x5b, 0x5b }, "C22 IAPS"       },  // DL1000
+    { 3, 0x40, { 0x39, 0x5b, 0x5b }, "C22 IAPS"       },  // SV1000
     { 3, 0x20, { 0x39, 0x5b, 0x06 }, "C21 Air Temp"   },
     { 3, 0x10, { 0x39, 0x06, 0x6d }, "C15 Eng Temp"   },
     { 3, 0x08, { 0x39, 0x06, 0x66 }, "C14 Pri TPS"    },
     { 3, 0x04, { 0x39, 0x06, 0x4f }, "C13 Air Press"  },
     { 3, 0x02, { 0x39, 0x06, 0x5b }, "C12 Crank Pos"  },
-    { 3, 0x01, { 0x39, 0x06, 0x06 }, "C11 CAM Shaft"  }, // DL1000
+    { 3, 0x01, { 0x39, 0x06, 0x06 }, "C11 CAM Shaft"  }, // SV1000
     { 4, 0x80, { 0x39, 0x66, 0x67 }, "C49 Pair Valve" },
     { 4, 0x40, { 0x39, 0x5b, 0x67 }, "C29 Sec TPS"    },
     { 4, 0x20, { 0x39, 0x5b, 0x7f }, "C28 STVA Motor" },
-    { 4, 0x08, { 0x39, 0x66, 0x66 }, "C44 O2 Sensor"  }, // DL1000
+    { 4, 0x08, { 0x39, 0x66, 0x66 }, "C44 O2 Sensor"  }, // SV1000
     { 0xff, 0xff, { 0x3f, 0x3f, 0x3f }, "000 No Error" }, // last entry!
 };
 
