@@ -10,7 +10,7 @@ This supports the following:
  * Oil pressure warning light
  * Neutral light
  * EFI warning light
- * Low fuel light
+ * ~~Low fuel light~~ **
  * Display the water temp from the the stock water temp sensor
  * Ability to decode EFI error codes from the SV650 ECU *
  * TPS adjustment indicator *
@@ -18,6 +18,8 @@ This supports the following:
 [*] Note: Normally the 4 digit LED display shows the water temp. 
 To show the TPS indicator or ECU error codes, you’ll need to use a 
 “Suzuki diagnostic tool” (aka a paperclip) to short two wires per the shop manual.
+
+[**] Note: Due to a design flaw, the Low Fuel Light does not work!
 
 More information about this project is available 
 [on my blog](http://synfin.net/sv650ecu "Suzuki SV650 ECU Decoder") and 
