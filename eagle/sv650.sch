@@ -8031,6 +8031,90 @@ Production Part - 8199
 </deviceset>
 </devicesets>
 </library>
+<library name="diode">
+<description>&lt;b&gt;Diodes&lt;/b&gt;&lt;p&gt;
+Based on the following sources:
+&lt;ul&gt;
+&lt;li&gt;Motorola : www.onsemi.com
+&lt;li&gt;Fairchild : www.fairchildsemi.com
+&lt;li&gt;Philips : www.semiconductors.com
+&lt;li&gt;Vishay : www.vishay.de
+&lt;/ul&gt;
+&lt;author&gt;Created by librarian@cadsoft.de&lt;/author&gt;</description>
+<packages>
+<package name="SMBG">
+<description>&lt;b&gt;DO-214AA GULL-WING&lt;/b&gt;&lt;p&gt;
+Source: www.rsonline.de .. SMBJ12/C/15/C/24/C/30/C/5.0/C/7.5/C Voltage Suppressor. Data Sheet</description>
+<wire x1="2.24" y1="1.85" x2="2.24" y2="-1.85" width="0.1016" layer="21"/>
+<wire x1="2.24" y1="-1.85" x2="-2.24" y2="-1.85" width="0.1016" layer="21"/>
+<wire x1="-2.24" y1="-1.85" x2="-2.24" y2="1.85" width="0.1016" layer="21"/>
+<wire x1="-2.24" y1="1.85" x2="2.24" y2="1.85" width="0.1016" layer="21"/>
+<smd name="C" x="-3.17" y="0" dx="1.27" dy="2.16" layer="1"/>
+<smd name="A" x="3.17" y="0" dx="1.27" dy="2.16" layer="1" rot="R180"/>
+<text x="-1.905" y="2.54" size="1.27" layer="25">&gt;NAME</text>
+<text x="-1.905" y="-3.81" size="1.27" layer="27">&gt;VALUE</text>
+<rectangle x1="-3.24" y1="-1.05" x2="-2.23" y2="1.05" layer="51"/>
+<rectangle x1="2.24" y1="-1.05" x2="3.24" y2="1.05" layer="51"/>
+</package>
+<package name="SMBJ">
+<description>&lt;b&gt;DO-214AA Modified J_BEND&lt;/b&gt;&lt;p&gt;
+Source: www.rsonline.de .. SMBJ12/C/15/C/24/C/30/C/5.0/C/7.5/C Voltage Suppressor. Data Sheet</description>
+<wire x1="2.24" y1="1.92" x2="2.24" y2="-1.92" width="0.1016" layer="51"/>
+<wire x1="2.24" y1="-1.92" x2="-2.24" y2="-1.92" width="0.1016" layer="21"/>
+<wire x1="-2.24" y1="-1.92" x2="-2.24" y2="1.92" width="0.1016" layer="51"/>
+<wire x1="-2.24" y1="1.92" x2="2.24" y2="1.92" width="0.1016" layer="21"/>
+<smd name="C" x="-2.03" y="0" dx="1.78" dy="2.16" layer="1"/>
+<smd name="A" x="2.04" y="0" dx="1.78" dy="2.16" layer="1" rot="R180"/>
+<text x="-1.905" y="2.54" size="1.27" layer="25">&gt;NAME</text>
+<text x="-1.905" y="-3.81" size="1.27" layer="27">&gt;VALUE</text>
+<rectangle x1="-2.8" y1="-1.1" x2="-2.25" y2="1.1" layer="51"/>
+<rectangle x1="2.25" y1="-1.1" x2="2.8" y2="1.1" layer="51"/>
+</package>
+</packages>
+<symbols>
+<symbol name="SUPPRESSOR">
+<wire x1="1.27" y1="-1.27" x2="0" y2="1.27" width="0.254" layer="94"/>
+<wire x1="0" y1="1.27" x2="-1.27" y2="-1.27" width="0.254" layer="94"/>
+<wire x1="1.27" y1="1.905" x2="1.27" y2="1.27" width="0.254" layer="94"/>
+<wire x1="1.27" y1="1.27" x2="0" y2="1.27" width="0.254" layer="94"/>
+<wire x1="-1.27" y1="-1.27" x2="1.27" y2="-1.27" width="0.254" layer="94"/>
+<wire x1="0" y1="1.27" x2="-1.27" y2="1.27" width="0.254" layer="94"/>
+<wire x1="-1.27" y1="1.27" x2="-1.27" y2="0.635" width="0.254" layer="94"/>
+<text x="2.794" y="1.905" size="1.778" layer="95">&gt;NAME</text>
+<text x="2.794" y="-0.889" size="1.778" layer="96">&gt;VALUE</text>
+<pin name="A" x="0" y="-2.54" visible="off" length="short" direction="pas" rot="R90"/>
+<pin name="C" x="0" y="2.54" visible="off" length="short" direction="pas" rot="R270"/>
+</symbol>
+</symbols>
+<devicesets>
+<deviceset name="SUPPRESSOR-" prefix="D" uservalue="yes">
+<description>&lt;b&gt;Suppressor diode&lt;/b&gt;</description>
+<gates>
+<gate name="G$1" symbol="SUPPRESSOR" x="0" y="0"/>
+</gates>
+<devices>
+<device name="SMBG" package="SMBG">
+<connects>
+<connect gate="G$1" pin="A" pad="A"/>
+<connect gate="G$1" pin="C" pad="C"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+<device name="SMBJ" package="SMBJ">
+<connects>
+<connect gate="G$1" pin="A" pad="A"/>
+<connect gate="G$1" pin="C" pad="C"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+</devicesets>
+</library>
 </libraries>
 <attributes>
 </attributes>
@@ -8117,7 +8201,7 @@ Production Part - 8199
 <part name="GND7" library="SparkFun" deviceset="GND" device=""/>
 <part name="GND8" library="SparkFun" deviceset="GND" device=""/>
 <part name="SUPPLY1" library="supply2" deviceset="+12V" device=""/>
-<part name="D6" library="SparkFun-DiscreteSemi" deviceset="DIODE-ZENER" device="-BZT52" value="16V Zener"/>
+<part name="D6" library="diode" deviceset="SUPPRESSOR-" device="SMBG" value="16V Zener"/>
 <part name="SUPPLY3" library="supply2" deviceset="+12V" device=""/>
 <part name="R5" library="synfinatic" deviceset="RESISTOR" device="PTH-5W" value="82"/>
 <part name="GND10" library="SparkFun" deviceset="GND" device=""/>
@@ -8148,8 +8232,8 @@ Production Part - 8199
 <sheet>
 <plain>
 <text x="157.48" y="-38.1" size="1.778" layer="91" rot="R180">To Wiring Harness</text>
-<text x="27.94" y="129.54" size="1.778" layer="91">650 ECU Decoder v4.4
-20140517</text>
+<text x="27.94" y="129.54" size="1.778" layer="91">650 ECU Decoder v4.5
+20140518</text>
 </plain>
 <instances>
 <instance part="$U3" gate="G$1" x="12.7" y="-2.54" smashed="yes">
@@ -8230,7 +8314,7 @@ Production Part - 8199
 <instance part="GND7" gate="1" x="-30.48" y="-5.08"/>
 <instance part="GND8" gate="1" x="-91.44" y="15.24"/>
 <instance part="SUPPLY1" gate="+12V" x="-43.18" y="76.2"/>
-<instance part="D6" gate="G$1" x="104.14" y="-7.62" rot="R90"/>
+<instance part="D6" gate="G$1" x="106.68" y="-10.16"/>
 <instance part="SUPPLY3" gate="+12V" x="-81.28" y="129.54"/>
 <instance part="R5" gate="G$1" x="-68.58" y="116.84" rot="R90"/>
 <instance part="GND10" gate="1" x="-43.18" y="88.9"/>
@@ -8465,10 +8549,10 @@ Production Part - 8199
 <wire x1="127" y1="-2.54" x2="116.84" y2="-2.54" width="0.1524" layer="91"/>
 <pinref part="SUPPLY4" gate="+12V" pin="+12V"/>
 <wire x1="116.84" y1="0" x2="116.84" y2="-2.54" width="0.1524" layer="91"/>
-<wire x1="116.84" y1="-2.54" x2="104.14" y2="-2.54" width="0.1524" layer="91"/>
+<wire x1="116.84" y1="-2.54" x2="106.68" y2="-2.54" width="0.1524" layer="91"/>
 <junction x="116.84" y="-2.54"/>
-<wire x1="104.14" y1="-2.54" x2="104.14" y2="-5.08" width="0.1524" layer="91"/>
 <pinref part="D6" gate="G$1" pin="C"/>
+<wire x1="106.68" y1="-2.54" x2="106.68" y2="-7.62" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="R8" gate="G$1" pin="2"/>
@@ -8670,10 +8754,12 @@ Production Part - 8199
 <net name="GND_MAIN" class="0">
 <segment>
 <pinref part="U$3" gate="G$1" pin="P$1"/>
-<wire x1="104.14" y1="-10.16" x2="104.14" y2="-33.02" width="0.1524" layer="91"/>
-<wire x1="104.14" y1="-33.02" x2="127" y2="-33.02" width="0.1524" layer="91"/>
-<pinref part="D6" gate="G$1" pin="A"/>
+<wire x1="104.14" y1="-33.02" x2="106.68" y2="-33.02" width="0.1524" layer="91"/>
 <label x="104.14" y="-33.02" size="1.778" layer="95" rot="R180" xref="yes"/>
+<pinref part="D6" gate="G$1" pin="A"/>
+<wire x1="106.68" y1="-33.02" x2="127" y2="-33.02" width="0.1524" layer="91"/>
+<wire x1="106.68" y1="-12.7" x2="106.68" y2="-33.02" width="0.1524" layer="91"/>
+<junction x="106.68" y="-33.02"/>
 </segment>
 <segment>
 <pinref part="U$3" gate="G$1" pin="P$9"/>
