@@ -8201,7 +8201,7 @@ Source: www.rsonline.de .. SMBJ12/C/15/C/24/C/30/C/5.0/C/7.5/C Voltage Suppresso
 <part name="GND7" library="SparkFun" deviceset="GND" device=""/>
 <part name="GND8" library="SparkFun" deviceset="GND" device=""/>
 <part name="SUPPLY1" library="supply2" deviceset="+12V" device=""/>
-<part name="D6" library="diode" deviceset="SUPPRESSOR-" device="SMBG" value="16V Zener"/>
+<part name="D6" library="diode" deviceset="SUPPRESSOR-" device="SMBG" value="SMAJ15A"/>
 <part name="SUPPLY3" library="supply2" deviceset="+12V" device=""/>
 <part name="R5" library="synfinatic" deviceset="RESISTOR" device="PTH-5W" value="82"/>
 <part name="GND10" library="SparkFun" deviceset="GND" device=""/>
@@ -8232,8 +8232,8 @@ Source: www.rsonline.de .. SMBJ12/C/15/C/24/C/30/C/5.0/C/7.5/C Voltage Suppresso
 <sheet>
 <plain>
 <text x="157.48" y="-38.1" size="1.778" layer="91" rot="R180">To Wiring Harness</text>
-<text x="27.94" y="129.54" size="1.778" layer="91">650 ECU Decoder v4.5
-20140518</text>
+<text x="27.94" y="129.54" size="1.778" layer="91">650 ECU Decoder v4.6
+20140517</text>
 </plain>
 <instances>
 <instance part="$U3" gate="G$1" x="12.7" y="-2.54" smashed="yes">
@@ -8783,9 +8783,9 @@ Source: www.rsonline.de .. SMBJ12/C/15/C/24/C/30/C/5.0/C/7.5/C Voltage Suppresso
 </sheet>
 </sheets>
 <errors>
-<approved hash="113,1,180.729,-23.5369,JP1,,,,,"/>
-<approved hash="113,1,82.9395,19.6431,JP2,,,,,"/>
-<approved hash="113,1,11.8195,70.4431,JP3,,,,,"/>
+<approved hash="113,1,180.729,-23.8014,JP1,,,,,"/>
+<approved hash="113,1,82.9395,19.3786,JP2,,,,,"/>
+<approved hash="113,1,11.8195,70.1786,JP3,,,,,"/>
 </errors>
 </schematic>
 </drawing>
