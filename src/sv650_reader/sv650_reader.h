@@ -13,8 +13,8 @@
  * Feel free to change these values based on how you want 
  * the ECU Decoder to behave
  */
-//#define ENABLE_TEMP         // Enable decoding temperature
-#define USE_CELCIUS           // Display in C, not F
+#define ENABLE_TEMP         // Enable decoding temperature
+//#define USE_CELCIUS           // Display in C, not F
 
 #define DECODE_ERRORS         // decode ECU codes to serial
 #define PRINT_DECODE 2000     // how often to decode error messages in ms
@@ -25,8 +25,8 @@
 
 #define BLINK_MS 500          // how fast to blink EFI Warning light on no-data error
 
-#define ENABLE_BATT_MONITOR    // Enable monitoring battery voltage
-#define BATT_VOLT_WARN 13.3    // Voltage to start warning at (float)
+//#define ENABLE_BATT_MONITOR    // Enable monitoring battery voltage
+#define BATT_VOLT_WARN 12.5    // Voltage to start warning at (float)
 #define BATT_VOLT_DELAY 1000   // Check battery voltage every XXXXms
 
 /*
@@ -41,22 +41,25 @@
  * Don't anything below this point unless you really know what you are doing!
  ****************************************************************************/
 #define ECU_SPEED 7800        // ECU serial speed
-
 #define SERIAL_SPEED 9600     // Always 9600, really 12Mhz!
-#define EFI_WARN 11           // EFI warning light
+
+// Pins we use.  Be sure to add to used_pins[]
+#define EFI_WARN 22           // EFI warning light
 #define CS 0   // B0
 #define CLK 1  // B1
 #define MOSI 2 // B2
 #define MODE 6 // D1
 #define RX 7   // D2  UART pins!
 #define TX 8   // D3 
+#define BATT_MON A0
+#define FUEL_ADC A1
+#define FUEL2_ADC A2
 
 // Votage monitoring values
-#define BATT_MON A0
-#define R1 32000.0   // R5 + R8
-#define R2 10000.0   // R6
+#define R1 30000.0   // R8
+#define R2 13300.0   // R6
 #define AREAD_TO_VOLT 0.0049
-#define ZENER_DROP_VOLTAGE 0.3 // How much the Zener drops the voltage we see
+#define ZENER_DROP_VOLTAGE 0.0 // 0.3 // How much the Zener drops the voltage we see
 
 /*
  *  Mode button

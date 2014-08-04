@@ -43,7 +43,7 @@ char *ftoa(char *a, double f, int precision);
 
 // pins we don't use on the Teensy board
 char used_pins[] = { 
-    EFI_WARN, CS, CLK, MOSI, MODE, RX, TX
+    EFI_WARN, CS, CLK, MOSI, MODE, RX, TX, BATT_MON, FUEL_ADC, FUEL2_ADC
 };
 
 unsigned long ms_last;     // last time we saw a message
@@ -68,6 +68,8 @@ setup() {
     pinMode(BATT_MON, INPUT);
     pinMode(MODE, INPUT);
     pinMode(EFI_WARN, OUTPUT);
+    pinMode(FUEL_ADC, INPUT);
+    pinMode(FUEL2_ADC, INPUT);
 
     // initialize serial communication to the ECU
     ecu.begin(ECU_SPEED);
@@ -136,7 +138,8 @@ setup() {
     ms_last = millis();
 
 #ifdef ENABLE_BATT_MONITOR 
-        print_battery_voltage();
+    print_battery_voltage();
+    delay(50000); 
 #endif
 
 }

@@ -140,7 +140,11 @@ print_led_temp() {
     /* 
      * covert temp into a value fareinheit and then print it
      */
+#ifdef USE_CELCIUS
+    display[3] = get_display_char('c');
+#else
     display[3] = get_display_char('F');
+#endif
     if (adc_value <= 42) {
         // temp == HI 
         display[0] = get_display_char('H');
