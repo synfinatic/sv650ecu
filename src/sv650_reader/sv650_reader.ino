@@ -49,7 +49,8 @@ char used_pins[] = {
 unsigned long ms_last;     // last time we saw a message
 int byte_idx = 0;          // message byte index
 byte sbytes[8];            // storage for our messages from the ECU
-int efi_alarm = 0;         // true or false if we've seen an error code
+bool efi_alarm = 0;        // true or false if we've seen an error code
+bool temp_alarm = 0;       // true or false if water temp is too high
 
 // Init our hardware serial & LCD display
 HardwareSerial ecu = HardwareSerial();
@@ -187,7 +188,12 @@ loop() {
                     // print TEMP to LED if there is no alarm
 #ifdef ENABLE_TEMP
                     if (! efi_alarm) {
-                        print_led_temp();
+                        if (print_led_temp() >= TEMP_WARN) {
+                            temp_alarm = 1;
+                        } else {
+                            temp_alarm = 0;
+                        }
+                        
                     }
 #endif
                 } 
@@ -238,6 +244,8 @@ loop() {
 #ifdef ENABLE_BATT_MONITOR 
             print_battery_voltage();
 #endif
+        } else if (temp_alarm) {
+            blink(ms);
         }
 
     }
@@ -373,7 +381,7 @@ blink(unsigned long time) {
     }
 
     // blink faster if the EFI alarm is set
-    if (efi_alarm == 1) {
+    if (efi_alarm) {
         blink_time /= 4;
     }
 
@@ -385,7 +393,12 @@ blink(unsigned long time) {
         if (hilo == HIGH) {
             serial_printf("Missing data for %lu seconds\n", (unsigned long)(time / 1000));
         }
+    } else if (temp_alarm) {
+        // Just solid if temp is too high
+        digitalWrite(EFI_WARN, HIGH);
+        return;
     }
+
 }
 
 

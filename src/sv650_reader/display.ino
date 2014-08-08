@@ -123,7 +123,7 @@ print_led_error(char tps_adjust, int idx, int efi_alarm) {
 /*
  * Print water temp
  */
-void 
+int
 print_led_temp() {
     unsigned int adc_value;
     unsigned int temp;
@@ -182,6 +182,7 @@ print_led_temp() {
 
     }
     display_values(display[0], display[1], display[2], display[3], 0);
+    return temp;
 }
 
 /*

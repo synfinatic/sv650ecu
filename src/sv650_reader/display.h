@@ -16,7 +16,7 @@ void display_values_colon(char, char, char, char, int);
 void display_values(char, char, char, char);
 void display_char(int, char);
 void print_led_error(char, int);
-void print_led_temp();
+int  print_led_temp();
 void print_led_bad_temp();
 void print_led_bad_efi();
 

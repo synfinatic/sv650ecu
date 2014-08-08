@@ -15,6 +15,7 @@
  */
 #define ENABLE_TEMP         // Enable decoding temperature
 //#define USE_CELCIUS           // Display in C, not F
+#define TEMP_WARN  230        // Temp in F to light EFI warning light
 
 #define DECODE_ERRORS         // decode ECU codes to serial
 #define PRINT_DECODE 2000     // how often to decode error messages in ms
