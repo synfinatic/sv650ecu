@@ -33,8 +33,8 @@
 /*
  * Debugging options.
  */
-#define DEBUG_MESSAGE       // decode each 8 byte message as hex
-#define DEBUG               // detailed debug
+// #define DEBUG_MESSAGE       // decode each 8 byte message as hex
+// #define DEBUG               // detailed debug
 //#define DEBUG_TIMING
 //#define DEBUG_TABLES        // Print our tables at startup via serial
 

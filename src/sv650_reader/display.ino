@@ -126,7 +126,7 @@ print_led_error(char tps_adjust, int idx, int efi_alarm) {
 int
 print_led_temp() {
     unsigned int adc_value;
-    unsigned int temp;
+    unsigned int temp, rettemp;
     int holding;
     char display[4];
 #ifdef USE_CELCIUS
@@ -164,6 +164,7 @@ print_led_temp() {
         temp = (unsigned int)celcius;
 #endif
         serial_printf("temp is %u\n", temp);
+        rettemp = temp;
 
         holding = temp % 10;
         display[2] = get_display_hex(holding);
@@ -182,7 +183,7 @@ print_led_temp() {
 
     }
     display_values(display[0], display[1], display[2], display[3], 0);
-    return temp;
+    return rettemp;
 }
 
 /*

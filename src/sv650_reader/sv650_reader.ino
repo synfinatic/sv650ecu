@@ -188,9 +188,13 @@ loop() {
                     // print TEMP to LED if there is no alarm
 #ifdef ENABLE_TEMP
                     if (! efi_alarm) {
-                        if (print_led_temp() >= TEMP_WARN) {
+                        csum = print_led_temp();
+                        if (csum >= TEMP_WARN) {
+                            digitalWrite(EFI_WARN, HIGH);
                             temp_alarm = 1;
-                        } else {
+                            serial_printf("lighting the lamp\n");
+                        } else if (temp_alarm) {
+                            digitalWrite(EFI_WARN, LOW);
                             temp_alarm = 0;
                         }
                         
@@ -239,15 +243,12 @@ loop() {
         ms = millis() - ms_last;
         if (ms > 1000) {
             blink(ms);
-        } else if (efi_alarm == 0) {
+        } else if (! efi_alarm && ! temp_alarm) {
             digitalWrite(EFI_WARN, LOW);
 #ifdef ENABLE_BATT_MONITOR 
             print_battery_voltage();
 #endif
-        } else if (temp_alarm) {
-            blink(ms);
         }
-
     }
 }
 
@@ -393,12 +394,7 @@ blink(unsigned long time) {
         if (hilo == HIGH) {
             serial_printf("Missing data for %lu seconds\n", (unsigned long)(time / 1000));
         }
-    } else if (temp_alarm) {
-        // Just solid if temp is too high
-        digitalWrite(EFI_WARN, HIGH);
-        return;
-    }
-
+    } 
 }
 
 
