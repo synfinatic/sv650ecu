@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="6.5.0">
+<eagle version="7.1.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="yes"/>
@@ -130,13 +130,13 @@
 <hole x="3.302" y="29.464" drill="5.1562"/>
 <hole x="50.546" y="29.464" drill="5.1562"/>
 <text x="40.548" y="48.252" size="1.27" layer="22" font="vector" rot="MR0">http://synfin.net/sv650ecu
-SV650 ECU Decoder v4.6</text>
+SV650 ECU Decoder v4.7</text>
 <text x="53.534" y="36.688" size="1.27" layer="22" rot="MR270">S/N:</text>
 <text x="8.906" y="50.432" size="1.27" layer="112">EFI</text>
 <text x="25.506" y="50.378" size="1.27" layer="112">Oil</text>
 <text x="41.712" y="50.402" size="1.27" layer="112">NTRL</text>
 <text x="41.3964" y="37.2906" size="1.27" layer="112">Fuel</text>
-<text x="40.624" y="46.558" size="1.016" layer="22" rot="MR0">20140518</text>
+<text x="40.624" y="46.558" size="1.016" layer="22" rot="MR0">20140907</text>
 <rectangle x1="45.638" y1="32.582" x2="51.734" y2="51.568" layer="22"/>
 <text x="5.75" y="33.8" size="1.27" layer="25">Mode</text>
 <text x="38.1" y="32.19" size="1.778" layer="26" rot="MR0">CONN1</text>
@@ -1449,28 +1449,6 @@ Ohmite 45 series:
 </package>
 </packages>
 </library>
-<library name="SparkFun-DiscreteSemi">
-<description>&lt;h3&gt;SparkFun Electronics' preferred foot prints&lt;/h3&gt;
-In this library you'll find discrete semiconductors- transistors, diodes, TRIACs, optoisolators, etc.&lt;br&gt;&lt;br&gt;
-We've spent an enormous amount of time creating and checking these footprints and parts, but it is the end user's responsibility to ensure correctness and suitablity for a given componet or application. If you enjoy using this library, please buy one of our products at www.sparkfun.com.
-&lt;br&gt;&lt;br&gt;
-&lt;b&gt;Licensing:&lt;/b&gt; Creative Commons ShareAlike 4.0 International - https://creativecommons.org/licenses/by-sa/4.0/ 
-&lt;br&gt;&lt;br&gt;
-You are welcome to use this library for commercial purposes. For attribution, we ask that when you begin to sell your device using our footprint, you email us with a link to the product being sold. We want bragging rights that we helped (in a very small part) to create your 8th world wonder. We would like the opportunity to feature your device on our homepage.</description>
-<packages>
-<package name="SOD-323">
-<wire x1="-0.9" y1="0.65" x2="-0.5" y2="0.65" width="0.2032" layer="21"/>
-<wire x1="-0.5" y1="0.65" x2="0.9" y2="0.65" width="0.2032" layer="21"/>
-<wire x1="-0.9" y1="-0.65" x2="-0.5" y2="-0.65" width="0.2032" layer="21"/>
-<wire x1="-0.5" y1="-0.65" x2="0.9" y2="-0.65" width="0.2032" layer="21"/>
-<wire x1="-0.5" y1="0.65" x2="-0.5" y2="-0.65" width="0.2032" layer="21"/>
-<smd name="C" x="-1.15" y="0" dx="0.63" dy="0.83" layer="1"/>
-<smd name="A" x="1.15" y="0" dx="0.63" dy="0.83" layer="1"/>
-<text x="-0.889" y="1.016" size="0.4064" layer="25">&gt;NAME</text>
-<text x="-1.016" y="-1.397" size="0.4064" layer="27">&gt;VALUE</text>
-</package>
-</packages>
-</library>
 <library name="jumper">
 <description>&lt;b&gt;Jumpers&lt;/b&gt;&lt;p&gt;
 &lt;author&gt;Created by librarian@cadsoft.de&lt;/author&gt;</description>
@@ -1558,6 +1536,28 @@ Source: www.rsonline.de .. SMBJ12/C/15/C/24/C/30/C/5.0/C/7.5/C Voltage Suppresso
 <text x="-1.905" y="-3.81" size="1.27" layer="27">&gt;VALUE</text>
 <rectangle x1="-3.24" y1="-1.05" x2="-2.23" y2="1.05" layer="51"/>
 <rectangle x1="2.24" y1="-1.05" x2="3.24" y2="1.05" layer="51"/>
+</package>
+</packages>
+</library>
+<library name="adafruit">
+<packages>
+<package name="SOD-123">
+<wire x1="-1" y1="0.7" x2="1" y2="0.7" width="0.1524" layer="21"/>
+<wire x1="1" y1="0.7" x2="1" y2="-0.7" width="0.1524" layer="21"/>
+<wire x1="1" y1="-0.7" x2="-1" y2="-0.7" width="0.1524" layer="21"/>
+<wire x1="-1" y1="-0.7" x2="-1" y2="0.7" width="0.1524" layer="21"/>
+<wire x1="-0.5" y1="0" x2="0.1" y2="0.4" width="0.1524" layer="21"/>
+<wire x1="0.1" y1="0.4" x2="0.1" y2="-0.4" width="0.1524" layer="21"/>
+<wire x1="0.1" y1="-0.4" x2="-0.5" y2="0" width="0.1524" layer="21"/>
+<wire x1="-1.778" y1="0.762" x2="1.778" y2="0.762" width="0.127" layer="21"/>
+<wire x1="1.778" y1="0.762" x2="1.778" y2="-0.762" width="0.127" layer="21"/>
+<wire x1="1.778" y1="-0.762" x2="-1.778" y2="-0.762" width="0.127" layer="21"/>
+<wire x1="-1.778" y1="-0.762" x2="-1.778" y2="0.762" width="0.127" layer="21"/>
+<smd name="C" x="-1.85" y="0" dx="1.2" dy="0.7" layer="1"/>
+<smd name="A" x="1.85" y="0" dx="1.2" dy="0.7" layer="1"/>
+<text x="-1.1" y="1" size="0.4064" layer="25">&gt;NAME</text>
+<text x="-1.1" y="-1.284" size="0.4064" layer="27">&gt;VALUE</text>
+<rectangle x1="-0.7" y1="-0.7" x2="-0.5" y2="0.7" layer="21"/>
 </package>
 </packages>
 </library>
@@ -1652,6 +1652,9 @@ Please make sure your boards conform to these design rules.</description>
 <autorouter>
 <pass name="Default">
 <param name="RoutingGrid" value="50mil"/>
+<param name="AutoGrid" value="1"/>
+<param name="Efforts" value="0"/>
+<param name="TopRouterVariant" value="1"/>
 <param name="tpViaShape" value="round"/>
 <param name="PrefDir.1" value="|"/>
 <param name="PrefDir.2" value="0"/>
@@ -1867,7 +1870,7 @@ Please make sure your boards conform to these design rules.</description>
 <element name="R15" library="resistor" package="M0805" value="13.3k" x="12.23" y="3.69" smashed="yes">
 <attribute name="NAME" x="11.194" y="1.476" size="1.016" layer="25"/>
 </element>
-<element name="D5" library="SparkFun-DiscreteSemi" package="SOD-323" value="10V Z" x="3.97" y="9.86" smashed="yes">
+<element name="D5" library="adafruit" package="SOD-123" value="10V Z" x="3.97" y="9.86" smashed="yes">
 <attribute name="NAME" x="3.431" y="10.846" size="1.016" layer="25"/>
 </element>
 </elements>
@@ -1954,9 +1957,9 @@ Please make sure your boards conform to these design rules.</description>
 <vertex x="0.3" y="0.38"/>
 </polygon>
 <contactref element="D5" pad="A"/>
-<wire x1="5.12" y1="9.86" x2="5.12" y2="6.94" width="0.3048" layer="1"/>
+<wire x1="5.82" y1="9.86" x2="5.73" y2="7.82" width="0.3048" layer="1"/>
 <contactref element="Q1" pad="2"/>
-<wire x1="5.12" y1="6.94" x2="4.75" y2="6.57" width="0.3048" layer="1"/>
+<wire x1="5.73" y1="7.82" x2="4.75" y2="6.57" width="0.3048" layer="1"/>
 <wire x1="4.75" y1="6.57" x2="4.75" y2="5.84" width="0.3048" layer="1"/>
 <wire x1="4.75" y1="5.84" x2="3.62" y2="4.71" width="0.3048" layer="1"/>
 <wire x1="16.36" y1="14.36" x2="16.36" y2="15.15" width="0.3048" layer="1"/>
@@ -1974,9 +1977,9 @@ Please make sure your boards conform to these design rules.</description>
 <wire x1="9.275784375" y1="42.495784375" x2="9.275784375" y2="31.345784375" width="0.3048" layer="16"/>
 <wire x1="19.34" y1="43.26" x2="10.04" y2="43.26" width="0.3048" layer="1"/>
 <wire x1="10.04" y1="43.26" x2="9.275784375" y2="42.495784375" width="0.3048" layer="16"/>
-<wire x1="4.29" y1="14.65" x2="5.12" y2="13.82" width="0.3048" layer="1"/>
-<wire x1="5.12" y1="13.82" x2="5.12" y2="9.86" width="0.3048" layer="1"/>
-<wire x1="5.12" y1="9.86" x2="6.17" y2="9.85" width="0.3048" layer="1"/>
+<wire x1="4.29" y1="14.65" x2="5.8" y2="13.18" width="0.3048" layer="1"/>
+<wire x1="5.8" y1="13.18" x2="5.82" y2="9.86" width="0.3048" layer="1"/>
+<wire x1="5.82" y1="9.86" x2="6.17" y2="9.85" width="0.3048" layer="1"/>
 <wire x1="6.17" y1="9.85" x2="7.16" y2="9.85" width="0.3048" layer="1"/>
 </signal>
 <signal name="N$2">
@@ -2296,8 +2299,8 @@ Please make sure your boards conform to these design rules.</description>
 <contactref element="Q1" pad="1"/>
 <contactref element="R15" pad="1"/>
 <contactref element="D5" pad="C"/>
-<wire x1="2.82" y1="9.86" x2="2.82" y2="7.41" width="0.3048" layer="1"/>
-<wire x1="2.82" y1="7.41" x2="3.62" y2="6.61" width="0.3048" layer="1"/>
+<wire x1="2.12" y1="9.86" x2="2.29" y2="7.41" width="0.3048" layer="1"/>
+<wire x1="2.29" y1="7.41" x2="3.62" y2="6.61" width="0.3048" layer="1"/>
 <wire x1="3.62" y1="6.61" x2="3.39" y2="6.61" width="0.3048" layer="1"/>
 <wire x1="3.39" y1="6.61" x2="2.32" y2="5.54" width="0.3048" layer="1"/>
 <wire x1="2.32" y1="5.54" x2="2.32" y2="3.75" width="0.3048" layer="1"/>
