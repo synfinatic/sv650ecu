@@ -14,8 +14,8 @@
  * the ECU Decoder to behave
  */
 #define ENABLE_TEMP           // Enable decoding water temp from the ECU
-//#define USE_CELCIUS           // Display in C, not F
-#define TEMP_WARN   200       // Deg F/C when to light EFI lamp solid
+//#define USE_CELCIUS         // Display in C, not F
+#define TEMP_WARN   235       // Deg F/C when to light EFI lamp solid
 #define ENABLE_BATT           // Enable measuring the battery voltage level
 
 #define DECODE_ERRORS         // decode ECU codes to serial
@@ -37,7 +37,7 @@
 #define DEBUG_MESSAGE       // decode each 8 byte message as hex
 #define DEBUG               // detailed debug 
 //#define DEBUG_TIMING
-//#define DEBUG_TABLES        // Print our tables at startup via serial
+#define DEBUG_TABLES        // Print our tables at startup via serial
 
 /****************************************************************************
  * Don't anything below this point unless you really know what you are doing!
@@ -59,13 +59,16 @@
 
 // Voltage monitoring values
 #define BATT_MON A0
+#define BATT_MON_DIGITAL 21    // Digital pin equivalent for A0
 #define R1 30000.0             // R8
 #define R2 13300.0             // R6
 #define AREAD_TO_VOLT 0.0049
 #define ZENER_DROP_VOLTAGE 0.0 // 0.35 // How much the Zener drops the voltage we see
 
 #define FUEL_ADC A1
+#define FUEL_DIGITAL 20        // Digital pin equivalent for A1
 #define FUEL2_ADC A2
+#define FUEL2_DIGITAL 19       // Digital pin equivalent for A2
 
 // Bitmask values for last_efi_light
 #define EFI_LIGHT_ALARM 1   

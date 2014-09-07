@@ -39,7 +39,8 @@ void no_flash_update();
 
 // pins we don't use on the Teensy board
 static char used_pins[] = { 
-    EFI_WARN, CS, CLK, MOSI, MODE_PIN, RX, TX, BATT_MON, FUEL_ADC, FUEL2_ADC
+    EFI_WARN, CS, CLK, MOSI, MODE_PIN, RX, TX, BATT_MON_DIGITAL, 
+    FUEL_DIGITAL, FUEL2_DIGITAL
 };
 
 // Order of 4-LED display modes
@@ -84,6 +85,24 @@ void
 setup() {
     int i;
     unsigned int j;
+    bool pin_is_used;
+
+    // Put unused pins in output mode so they don't float
+    for (i = 0; i <= 24;  i++) {
+        pin_is_used = false;
+        for (j = 0; j < sizeof(used_pins); j++) {
+            if (i == used_pins[j]) {
+                pin_is_used = true;
+                break;
+            }
+        }
+        if (! pin_is_used) {
+#ifdef DEBUG_TABLES
+            serial_printf("Marking pin #%d as OUTPUT\n", i);
+#endif
+            pinMode(i, OUTPUT);
+        }
+    } 
 
     // initialize serial communication to the ECU
     Serial.begin(SERIAL_SPEED);
@@ -105,19 +124,6 @@ setup() {
 
     // clear display
     display_chars(' ', ' ', ' ', ' ');
-
-    // Put unused pins in output mode so they don't float
-    for (i = 0; i <= 24;  i++) {
-        for (j = 0; j < sizeof(used_pins); j++) {
-            if (i == used_pins[j]) {
-#ifdef DEBUG_TABLES
-                serial_printf("Marking pin #%d as OUTPUT\n", i);
-#endif
-                pinMode(i, OUTPUT);
-                break;
-            }
-        }
-    } 
 
     // clear sbytes[]
     clear_buf();
