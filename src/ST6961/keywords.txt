@@ -1,0 +1,7 @@
+ST6961		KEYWORD1
+initDisplay	KEYWORD2
+initRAM     KEYWORD2
+sendCmd		KEYWORD2
+sendDigit	KEYWORD2
+sendNum		KEYWORD2
+sendDigits	KEYWORD2
