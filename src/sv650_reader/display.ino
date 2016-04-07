@@ -12,7 +12,7 @@
 
 #include "sv650_reader.h"
 
-const char DISPPOS[4] = { 0xc0, 0xc2, 0xc4, 0xc6 };
+const byte DISPPOS[4] = { 0xc0, 0xc2, 0xc4, 0xc6 };
 extern bool efi_alarm, bad_efi, low_batt;
 
 /*
@@ -85,7 +85,7 @@ display_values(char digit1, char digit2, char digit3, char digit4, int colon)
  * Prints a single character at the given position on the 7 segment display
  */
 void 
-display_char(int position, char digit)
+display_char(int position, byte digit)
 {
     digitalWrite(CS,LOW);
     shiftOut(MOSI, CLK, LSBFIRST, DISPPOS[position]);

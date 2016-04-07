@@ -161,7 +161,7 @@ static const ECU_ERRORS error_table[] =
  * I wanted to store all possible values (265-68F) in a single byte.
  */
 
-PROGMEM prog_uchar temp_table[] = 
+const byte temp_table[] PROGMEM = 
 {
     205, 203, 201, 199, 197, 196, 194, 192, 190, 188, 187, 185, 184, 183, 181,
     180, 179, 177, 176, 175, 173, 172, 171, 169, 168, 167, 165, 164, 163, 161,
@@ -197,7 +197,7 @@ PROGMEM prog_uchar temp_table[] =
  * on the 7 segment display.  Not all characters are represented and 
  * some chars overlap (especially upper & lower case).
  */
-PROGMEM prog_uchar display_table[] =
+const byte display_table[] PROGMEM =
 {
     0    , 0    , 0    , 0    , 0    , 0    , 0    , 0    , 
     0    , 0    , 0    , 0    , 0    , 0    , 0    , 0    , 

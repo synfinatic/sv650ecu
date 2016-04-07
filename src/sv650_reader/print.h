@@ -6,12 +6,13 @@
  * More information is available here: https://github.com/synfinatic/sv650ecu
  */
 
-#ifndef DISPLAY_H
-#define DISPLAY_H
+#ifndef PRINT_H
+#define PRINT_H
 
 void print_led_error(char, int, int);
 int print_led_ecu();
 void print_led_bad_ecu();
 void print_battery_voltage();
+int print_led_temp();
 
 #endif

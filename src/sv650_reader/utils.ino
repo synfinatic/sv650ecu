@@ -154,7 +154,7 @@ parse_ecu_byte(byte data, unsigned long delta)
         }
 #endif
 
-        clear_buf;
+        clear_buf();
 
         if (byte_idx != 0) {
             serial_printf("Got %02x @ %dms (late, forced restart) for index: %d\n", data, delta, -1);
