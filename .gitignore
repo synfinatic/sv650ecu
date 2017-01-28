@@ -4,3 +4,5 @@
 *.gpi
 *.xln
 *.dri
+*.swp
+.DS_Store
