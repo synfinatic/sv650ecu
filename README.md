@@ -12,7 +12,7 @@ This supports the following:
  * EFI warning light
  * Low fuel light *
  * Display the water temp from the the stock water temp sensor
- * Ability to decode EFI error codes from the SV650 ECU *
+ * Ability to decode EFI error codes from the SV650 ECU
  * TPS adjustment indicator **
 
 [*] Note: Untested.
